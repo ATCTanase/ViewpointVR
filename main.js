@@ -73,11 +73,10 @@ const splat = new SplatMesh({
 });
 
 // ★ 最重要：位置とスケール
+splat.rotation.x = -Math.PI / 2;
 splat.position.set(0, 1.5, -1.0);
 splat.scale.setScalar(0.02);
 //splat.material.uniforms.sizeMultiplier.value = 2.0;
-splat.rotation.x = -Math.PI / 2;
-
 scene.add(splat);
 
 // ロード確認
