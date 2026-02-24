@@ -19,6 +19,9 @@ document.body.appendChild(VRButton.createButton(renderer));
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x000000);
 
+const world = new THREE.Group();
+scene.add(world);
+
 /* ----------------------------------
    Camera
 ---------------------------------- */
@@ -45,6 +48,7 @@ controls.update();
 renderer.xr.addEventListener('sessionstart', () => {
   // VR開始時：マウス操作を無効化
   controls.enabled = false;
+  world.position.set(0, 0, -3);
 });
 
 renderer.xr.addEventListener('sessionend', () => {
@@ -61,8 +65,8 @@ scene.add(new THREE.AmbientLight(0xffffff, 1.0));
 /* ----------------------------------
    Debug helpers（必要なら有効化）
 ---------------------------------- */
- scene.add(new THREE.AxesHelper(1));
- scene.add(new THREE.GridHelper(10, 10));
+ world.add(new THREE.AxesHelper(1));
+ world.add(new THREE.GridHelper(10, 10));
 
 /* ----------------------------------
    Gaussian Splat (spark)
@@ -77,7 +81,7 @@ splat.rotation.set(-Math.PI / 2, -Math.PI / 2, 0, "YXZ");
 splat.position.set(0, 1.5, 1.0);
 splat.scale.setScalar(0.02);
 //splat.material.uniforms.sizeMultiplier.value = 2.0;
-scene.add(splat);
+world.add(splat);
 
 // ロード確認
 splat.onLoad = () => {
