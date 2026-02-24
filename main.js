@@ -86,6 +86,7 @@ world.add(splat);
 // ロード確認
 splat.onLoad = () => {
   splat.material.uniforms.sizeMultiplier.value = 2.0;
+  splat.material.uniforms.pointSize.value = 2.0;
   console.log('Gaussian Splat loaded');
 };
 
