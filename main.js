@@ -81,11 +81,11 @@ const splat = new SplatMesh({
 splat.rotation.set(-Math.PI / 2, -Math.PI / 2, 0, "YXZ");
 splat.position.set(8, 0, -130);
 //splat.scale.setScalar(0.02);
-//splat.material.uniforms.sizeMultiplier.value = 2.0;
 world.add(splat);
 
 // ロード確認
 splat.onLoad = () => {
+  splat.material.uniforms.sizeMultiplier.value = 2.0;
   console.log('Gaussian Splat loaded');
 };
 
