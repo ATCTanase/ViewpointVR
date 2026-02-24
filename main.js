@@ -73,14 +73,20 @@ const splat = new SplatMesh({
 });
 
 // ★ 最重要：位置とスケール
-const splatGroup = new THREE.Group();
-scene.add(splatGroup);
+splat.position.set(0, 1.5, -1.0);
+splat.scale.setScalar(0.02);
+//splat.material.uniforms.sizeMultiplier.value = 2.0;
 
-splatGroup.add(splat);
+splat.matrixAutoUpdate = false;
 
-splatGroup.position.set(0, 1.5, -1.0);
-splatGroup.scale.setScalar(0.02);
-splatGroup.rotation.y = Math.PI / 2;
+const m = new THREE.Matrix4();
+m.makeRotationY(Math.PI / 2);
+
+splat.matrix.copy(m);
+splat.matrixWorldNeedsUpdate = true;
+
+scene.add(splat);
+
 // ロード確認
 splat.onLoad = () => {
   console.log('Gaussian Splat loaded');
