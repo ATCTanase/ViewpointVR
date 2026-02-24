@@ -78,7 +78,7 @@ const splat = new SplatMesh({
 
 // ★ 最重要：位置とスケール
 splat.rotation.set(-Math.PI / 2, -Math.PI / 2, 0, "YXZ");
-splat.position.set(0, 0, -500.0);
+splat.position.set(0, 0, -100.0);
 //splat.scale.setScalar(0.02);
 //splat.material.uniforms.sizeMultiplier.value = 2.0;
 world.add(splat);
