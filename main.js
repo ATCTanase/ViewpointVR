@@ -2,6 +2,40 @@ import * as THREE from 'three';
 import { VRButton } from 'three/examples/webxr/VRButton.js';
 import { OrbitControls } from 'three/examples/controls/OrbitControls.js';
 import { SplatMesh } from '@sparkjsdev/spark';
+import { XRControllerModelFactory } from "three/examples//jsm/webxr/XRControllerModelFactory.js";
+
+// コントローラモデルファクトリーの準備
+const controllerModelFactory = new XRControllerModelFactory();
+
+// コントローラの光線の準備
+const geometry = new THREE.BufferGeometry().setFromPoints([
+  new THREE.Vector3(0, 0, 0),
+  new THREE.Vector3(0, 0, -1),
+]);
+const line = new THREE.Line(geometry);
+line.name = "line";
+line.scale.z = 5;
+
+// コントローラの追加
+function addController(index) {
+  // コントローラの追加
+  const controller = renderer.xr.getController(index);
+  scene.add(controller);
+
+  // コントローラモデルの追加
+  const controllerGrip = renderer.xr.getControllerGrip(index);
+  controllerGrip.add(
+    controllerModelFactory.createControllerModel(controllerGrip)
+  );
+  scene.add(controllerGrip);
+
+  // コントローラの光線の追加
+  controller.add(line.clone());
+  return controller;
+}
+// コントローラの準備
+const controller0 = addController(0);
+const controller1 = addController(1);
 
 /* ----------------------------------
    Renderer
