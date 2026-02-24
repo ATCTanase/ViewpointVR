@@ -68,7 +68,7 @@ scene.add(new THREE.AmbientLight(0xffffff, 1.0));
    Gaussian Splat (spark)
 ---------------------------------- */
 const splat = new SplatMesh({
-  url: './__point_cloud.ply',   // ← 自分の PLY
+  url: './point_cloud_alpha_voxel_200k.ply',   // ← 自分の PLY
   alphaTest: 0.003
 });
 
