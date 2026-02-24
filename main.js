@@ -67,10 +67,11 @@ scene.add(new THREE.AmbientLight(0xffffff, 1.0));
 /* ----------------------------------
    Gaussian Splat (spark)
 ---------------------------------- */
-const splat = new SplatMesh({
-  url: './__point_cloud.ply',   // ← 自分の PLY
-  alphaTest: 0.003
-});
+// const splat = new SplatMesh({
+//   url: './__point_cloud.ply',   // ← 自分の PLY
+//   alphaTest: 0.003
+// });
+const splat = new SplatMesh('./modelA');
 
 // ★ 最重要：位置とスケール
 splat.position.set(0, 1.5, -1.0);
