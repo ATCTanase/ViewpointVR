@@ -76,14 +76,7 @@ const splat = new SplatMesh({
 splat.position.set(0, 1.5, -1.0);
 splat.scale.setScalar(0.02);
 //splat.material.uniforms.sizeMultiplier.value = 2.0;
-
-splat.matrixAutoUpdate = false;
-
-const m = new THREE.Matrix4();
-m.makeRotationY(Math.PI / 2);
-
-splat.matrix.copy(m);
-splat.matrixWorldNeedsUpdate = true;
+splat.rotation.x = -Math.PI / 2;
 
 scene.add(splat);
 
