@@ -48,7 +48,7 @@ controls.update();
 renderer.xr.addEventListener('sessionstart', () => {
   // VR開始時：マウス操作を無効化
   controls.enabled = false;
-  world.position.set(0, -1.6, -3);
+  world.position.set(0, 0, -3);
 });
 
 renderer.xr.addEventListener('sessionend', () => {
@@ -78,8 +78,8 @@ const splat = new SplatMesh({
 
 // ★ 最重要：位置とスケール
 splat.rotation.set(-Math.PI / 2, -Math.PI / 2, 0, "YXZ");
-splat.position.set(0, 1.5, 1.0);
-splat.scale.setScalar(0.02);
+splat.position.set(0, 0, 0.0);
+//splat.scale.setScalar(0.02);
 //splat.material.uniforms.sizeMultiplier.value = 2.0;
 world.add(splat);
 
