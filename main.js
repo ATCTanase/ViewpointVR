@@ -48,7 +48,7 @@ controls.update();
 renderer.xr.addEventListener('sessionstart', () => {
   // VR開始時：マウス操作を無効化
   controls.enabled = false;
-  world.position.set(0, 0, -3);
+  world.position.set(0, -1.6, -3);
 });
 
 renderer.xr.addEventListener('sessionend', () => {
