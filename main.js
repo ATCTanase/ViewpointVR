@@ -84,6 +84,22 @@ splat.onLoad = () => {
   console.log('Gaussian Splat loaded');
 };
 
+const splat2 = new SplatMesh({
+  url: './point_cloud_alpha_voxel_200k.ply',   // ← 自分の PLY
+  alphaTest: 0.003
+});
+
+// ★ 最重要：位置とスケール
+splat2.position.set(0, 1.5, -1.0);
+splat2.scale.setScalar(0.02);
+//splat.material.uniforms.sizeMultiplier.value = 2.0;
+scene.add(splat2);
+
+// ロード確認
+splat2.onLoad = () => {
+  console.log('Gaussian Splat loaded');
+};
+
 /* ----------------------------------
    Resize
 ---------------------------------- */
