@@ -11,6 +11,8 @@ const moveSpeed = 3.0;
 
 let controller1, controller2;
 let controllerGrip1, controllerGrip2;
+let tempMatrix = new THREE.Matrix4();
+let laser = null;
 
 /* ----------------------------------
    Renderer
