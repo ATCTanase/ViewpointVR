@@ -124,7 +124,7 @@ setTimeout(() => {
   console.log("setTimeout");
   console.log(splat.material);
   console.log(splat.material?.uniforms);
-}, 2000);
+}, 20000);
 
 /* ----------------------------------
    Resize
