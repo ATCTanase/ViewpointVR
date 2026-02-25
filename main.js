@@ -2,7 +2,13 @@ import * as THREE from 'three';
 import { VRButton } from 'three/examples/webxr/VRButton.js';
 import { OrbitControls } from 'three/examples/controls/OrbitControls.js';
 import { SplatMesh } from '@sparkjsdev/spark';
+import { XRControllerModelFactory } from 'three/examples/jsm/webxr/XRControllerModelFactory.js';
 
+
+const controllerModelFactory = new XRControllerModelFactory();
+
+let controller1, controller2;
+let controllerGrip1, controllerGrip2;
 
 /* ----------------------------------
    Renderer
@@ -50,12 +56,37 @@ renderer.xr.addEventListener('sessionstart', () => {
   // VR開始時：マウス操作を無効化
   controls.enabled = false;
   world.position.set(0, 0, -3);
+
+    // ---- controller input ----
+  controller1 = renderer.xr.getController(0);
+  controller2 = renderer.xr.getController(1);
+  scene.add(controller1);
+  scene.add(controller2);
+
+  // ---- controller model ----
+  controllerGrip1 = renderer.xr.getControllerGrip(0);
+  controllerGrip1.add(
+    controllerModelFactory.createControllerModel(controllerGrip1)
+  );
+  scene.add(controllerGrip1);
+
+  controllerGrip2 = renderer.xr.getControllerGrip(1);
+  controllerGrip2.add(
+    controllerModelFactory.createControllerModel(controllerGrip2)
+  );
+  scene.add(controllerGrip2);
 });
 
 renderer.xr.addEventListener('sessionend', () => {
   // VR終了時：マウス操作を復帰
   controls.enabled = true;
   controls.update();
+
+  if (controller1) scene.remove(controller1);
+  if (controller2) scene.remove(controller2);
+  if (controllerGrip1) scene.remove(controllerGrip1);
+  if (controllerGrip2) scene.remove(controllerGrip2);
+
 });
 
 /* ----------------------------------
@@ -80,13 +111,14 @@ const splat = new SplatMesh({
 // ★ 最重要：位置とスケール
 splat.rotation.set(-Math.PI / 2, -Math.PI / 2, 0, "YXZ");
 splat.position.set(8, 0, -130);
+splat.material.uniforms.sizeMultiplier.value = 2.0;
+splat.material.uniforms.pointSize.value = 2.0;
+
 //splat.scale.setScalar(0.02);
 world.add(splat);
 
 // ロード確認
 splat.onLoad = () => {
-  splat.material.uniforms.sizeMultiplier.value = 2.0;
-  splat.material.uniforms.pointSize.value = 2.0;
   console.log('Gaussian Splat loaded');
 };
 
