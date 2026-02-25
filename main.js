@@ -115,7 +115,6 @@ splat.position.set(8, 0, -130);
 world.add(splat);
 
 // ロード確認
-await splat.load();
 splat.onLoad = () => {
   console.log("Gaussian Splat loaded");
    console.log(splat.material);
