@@ -115,12 +115,11 @@ splat.position.set(8, 0, -130);
 world.add(splat);
 
 // ロード確認
-splat.onLoad = () => {
-
+splat.ready.then(() => {
    console.log(splat.material);
    console.log(splat.material.uniforms);
   console.log('Gaussian Splat loaded');
-};
+});
 
 
 /* ----------------------------------
