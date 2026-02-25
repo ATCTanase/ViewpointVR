@@ -116,7 +116,6 @@ world.add(splat);
 
 console.log(splat);
 console.log(splat.material);
-console.log(splat.material.uniforms);
 
 // ロード確認
 splat.onLoad = () => {
