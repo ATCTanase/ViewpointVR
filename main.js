@@ -43,6 +43,9 @@ const camera = new THREE.PerspectiveCamera(
 camera.position.set(0, 1.6, 3);
 
 
+/* ----------------------------------
+   UI
+---------------------------------- */
 const menuData = [
   { icon: "./icon/360.png", title: "360°画像", key: "F1" },
   { icon: "./icon/Map.png", title: "MAP", key: "F2" },
@@ -52,28 +55,36 @@ const menuData = [
 ];
 
 const uiGroup = new THREE.Group();
-uiGroup.position.set(0, -0.3, -1.2); // 少し下＆前
+uiGroup.position.set(0, -0.25, -1.5);
+uiGroup.renderOrder = 1000;
 camera.add(uiGroup);
 scene.add(camera);
 
 const menu = new THREE.Group();
 uiGroup.add(menu);
-function createMenuBar(width = 2.4, height = 0.5) {
 
+function createMenuBar(width = 1.4, height = 0.28) {
   const geometry = new THREE.PlaneGeometry(width, height);
 
   const material = new THREE.MeshBasicMaterial({
     color: 0x2f5f75,
     transparent: true,
-    opacity: 0.85
+    opacity: 0.85,
+    depthTest: false,
+    depthWrite: false
   });
 
-  const bar = new THREE.Mesh(geometry, material);
-  bar.renderOrder = 999;
-  material.depthTest = false;
+  const bar = new THREE.Mesh(
+    new THREE.PlaneGeometry(width, height),
+    material
+  );
+
+  bar.renderOrder = 1000;
+  bar.position.z = -0.001; // ← ボタンより少し後ろ
 
   return bar;
 }
+
 
 const menuBar = createMenuBar();
 uiGroup.add(menuBar);
@@ -81,68 +92,86 @@ function createButton(data) {
 
   const group = new THREE.Group();
 
+  const BUTTON_W = 0.18;
+  const BUTTON_H = 0.18;
+
   // 背景
   const bg = new THREE.Mesh(
-    new THREE.PlaneGeometry(0.35, 0.35),
+    new THREE.PlaneGeometry(BUTTON_W, BUTTON_H),
     new THREE.MeshBasicMaterial({
       color: 0x5aa0bd,
       transparent: true,
-      opacity: 0.95
+      opacity: 0.95,
+      depthTest: false,
+      depthWrite: false
     })
   );
 
-  bg.material.depthTest = false;
+  bg.renderOrder = 1001;
   group.add(bg);
 
   // アイコン
   const texture = new THREE.TextureLoader().load(data.icon);
 
   const icon = new THREE.Mesh(
-    new THREE.PlaneGeometry(0.15, 0.15),
-    new THREE.MeshBasicMaterial({ map: texture, transparent: true })
+    new THREE.PlaneGeometry(0.08, 0.08),
+    new THREE.MeshBasicMaterial({
+      map: texture,
+      transparent: true,
+      depthTest: false,
+      depthWrite: false
+    })
   );
-  icon.position.y = 0.07;
+
+  icon.position.set(0, 0.04, 0.001);
+  icon.renderOrder = 1002;
   group.add(icon);
 
-  // テキスト描画
+  // テキストCanvas
   const canvas = document.createElement("canvas");
   canvas.width = 512;
   canvas.height = 256;
   const ctx = canvas.getContext("2d");
 
-  ctx.fillStyle = "white";
-  ctx.textAlign = "center";
+  ctx.clearRect(0, 0, 512, 256);
 
-  ctx.font = "bold 48px sans-serif";
+  ctx.textAlign = "center";
+  ctx.fillStyle = "white";
+  ctx.font = "bold 42px sans-serif";
   ctx.fillText(data.title, 256, 150);
 
-  ctx.font = "28px sans-serif";
   ctx.fillStyle = "#d0e6f0";
+  ctx.font = "26px sans-serif";
   ctx.fillText(data.key, 256, 200);
 
   const textTexture = new THREE.CanvasTexture(canvas);
 
   const text = new THREE.Mesh(
-    new THREE.PlaneGeometry(0.35, 0.2),
+    new THREE.PlaneGeometry(0.18, 0.10),
     new THREE.MeshBasicMaterial({
       map: textTexture,
-      transparent: true
+      transparent: true,
+      depthTest: false,
+      depthWrite: false
     })
   );
-  text.position.y = -0.05;
+
+  text.position.set(0, -0.05, 0.002);
+  text.renderOrder = 1003;
+
   group.add(text);
 
   return group;
 }
 
-const spacing = 0.45;
+const spacing = 0.22;
 
 menuData.forEach((data, i) => {
 
   const btn = createButton(data);
 
-  btn.position.x = (i - (menuData.length - 1) / 2) * spacing;
-  btn.position.y = 0;
+  btn.position.x =
+    (i - (menuData.length - 1) / 2) * spacing;
 
   uiGroup.add(btn);
 });
