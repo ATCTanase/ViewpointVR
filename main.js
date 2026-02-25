@@ -117,8 +117,8 @@ world.add(splat);
 // ロード確認
 splat.onLoad = () => {
 
-  splat.material.uniforms.sizeMultiplier.value = 2.5;
-  splat.material.depthWrite = false;
+   console.log(splat.material);
+   console.log(splat.material.uniforms);
   console.log('Gaussian Splat loaded');
 };
 
