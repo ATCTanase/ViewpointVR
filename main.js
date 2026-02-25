@@ -42,6 +42,102 @@ const camera = new THREE.PerspectiveCamera(
 );
 camera.position.set(0, 1.6, 3);
 
+const images = [
+  "./icon/360.png",
+  "./icon/Map.png",
+  "./icon/News.png",
+  "./icon/Setting.png",
+  "./icon/ExitApp.png",
+];
+
+const titles = [
+  "360°画像",
+  "MAP",
+  "情報",
+  "設定",
+  "終了"
+];
+
+const subtitles = [
+  "F1",
+  "F2",
+  "F3",
+  "F4",
+  "F5"
+];
+
+const uiGroup = new THREE.Group();
+uiGroup.position.set(0, -0.3, -1.2); // 少し下＆前
+camera.add(uiGroup);
+scene.add(camera);
+
+const menu = new THREE.Group();
+uiGroup.add(menu);
+
+function createMenuButton(imageUrl, title, subtitle) {
+
+  const group = new THREE.Group();
+
+  // 背景
+  const bg = new THREE.Mesh(
+    new THREE.PlaneGeometry(0.4, 0.25),
+    new THREE.MeshBasicMaterial({ color: 0x222222 })
+  );
+  group.add(bg);
+
+  // 画像
+  const loader = new THREE.TextureLoader();
+  const texture = loader.load(imageUrl);
+
+  const image = new THREE.Mesh(
+    new THREE.PlaneGeometry(0.35, 0.15),
+    new THREE.MeshBasicMaterial({ map: texture })
+  );
+  image.position.y = 0.05;
+  group.add(image);
+
+  // タイトル + サブテキスト（Canvas）
+  const canvas = document.createElement('canvas');
+  canvas.width = 512;
+  canvas.height = 256;
+  const ctx = canvas.getContext('2d');
+
+  ctx.fillStyle = "white";
+  ctx.font = "bold 40px sans-serif";
+  ctx.fillText(title, 20, 160);
+
+  ctx.font = "28px sans-serif";
+  ctx.fillStyle = "#aaaaaa";
+  ctx.fillText(subtitle, 20, 210);
+
+  const textTexture = new THREE.CanvasTexture(canvas);
+
+  const text = new THREE.Mesh(
+    new THREE.PlaneGeometry(0.35, 0.15),
+    new THREE.MeshBasicMaterial({ map: textTexture, transparent: true })
+  );
+  text.position.y = -0.05;
+  group.add(text);
+
+  return group;
+}
+const menu = new THREE.Group();
+uiGroup.add(menu);
+
+const spacing = 0.45;
+
+for (let i = 0; i < images.length; i++) {
+
+  const btn = createMenuButton(
+    images[i],
+    titles[i],
+    subtitles[i]
+  );
+
+  btn.position.x = (i - (images.length - 1) / 2) * spacing;
+  menu.add(btn);
+}
+
 /* ----------------------------------
    PC Controls (OrbitControls)
 ---------------------------------- */
