@@ -89,7 +89,7 @@ const totalWidth =
   (menuData.length - 1) * spacing + BUTTON_W + 0.15; // 余白ちょい足し
 
 const menuBar = createMenuBar(totalWidth, 0.3);
-uiGroup.renderOrder = 9999;
+uiGroup.renderOrder = 9990;
 uiGroup.add(menuBar);
 function createButton(data) {
 
@@ -134,7 +134,7 @@ function createButton(data) {
   );
 
   icon.position.set(0, 0.04, 0.001);
-  group.position.z = 0.01;
+  uiGroup.renderOrder = 9991;
   group.add(icon);
 
   // テキストCanvas
@@ -167,6 +167,7 @@ function createButton(data) {
   );
 
   text.position.set(0, -0.05, 0.002);
+  uiGroup.renderOrder = 9992;
   group.add(text);
 
   return group;
