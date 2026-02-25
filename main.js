@@ -151,35 +151,46 @@ window.addEventListener('resize', () => {
 /* ----------------------------------
    Render loop
 ---------------------------------- */
+const clock = new THREE.Clock();
+
 renderer.setAnimationLoop(() => {
-   const delta = renderer.xr.isPresenting
-    ? renderer.xr.getFrame().getViewerPose(renderer.xr.getReferenceSpace())
-    : null;
+  const delta = clock.getDelta();
 
-  if (renderer.xr.isPresenting && rightController?.gamepad) {
+  if (renderer.xr.isPresenting) {
 
-    const axes = rightController.gamepad.axes;
+    const session = renderer.xr.getSession();
 
-    // 右スティックは通常 axes[2], axes[3]
-    const x = axes[2] || 0; // 左右
-    const y = axes[3] || 0; // 前後
+    if (session) {
 
-    const dt = renderer.xr.getSession()
-      ? renderer.xr.getSession().frameRate ? 1/renderer.xr.getSession().frameRate : 0.016
-      : 0.016;
+      session.inputSources.forEach((source) => {
 
-    // カメラの向き基準で移動
-    const dir = new THREE.Vector3();
-    camera.getWorldDirection(dir);
+        if (source.handedness === 'right' && source.gamepad) {
 
-    const right = new THREE.Vector3()
-      .crossVectors(dir, camera.up)
-      .normalize();
+          const axes = source.gamepad.axes;
 
-    world.position.addScaledVector(dir, y * moveSpeed * dt);
-    world.position.addScaledVector(right, x * moveSpeed * dt);
+          // Quest系は [2],[3] が右スティック
+          const x = axes[2] ?? 0;
+          const y = axes[3] ?? 0;
+
+          if (Math.abs(x) > 0.1 || Math.abs(y) > 0.1) {
+
+            const dir = new THREE.Vector3();
+            camera.getWorldDirection(dir);
+            dir.y = 0;
+            dir.normalize();
+
+            const right = new THREE.Vector3()
+              .crossVectors(dir, camera.up)
+              .normalize();
+
+            world.position.addScaledVector(dir, -y * moveSpeed * delta);
+            world.position.addScaledVector(right, x * moveSpeed * delta);
+          }
+        }
+
+      });
+    }
   }
-
 
   if (controls.enabled) {
     controls.update(); // PC操作時のみ
