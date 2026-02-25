@@ -248,26 +248,26 @@ renderer.xr.addEventListener('sessionstart', () => {
     controllerModelFactory.createControllerModel(controllerGrip2)
   );
   scene.add(controllerGrip2);
+   controller1.addEventListener("selectstart", () => {
 
+   tempMatrix.identity().extractRotation(controller1.matrixWorld);
+
+   raycaster.ray.origin.setFromMatrixPosition(controller1.matrixWorld);
+   raycaster.ray.direction.set(0, 0, -1).applyMatrix4(tempMatrix);
+
+   const intersects = raycaster.intersectObjects(uiGroup.children, true);
+
+   if (intersects.length > 0) {
+      const obj = intersects[0].object;
+
+      if (obj.userData.isButton) {
+         obj.userData.onClick();
+      }
+   }
+   });
 });
 
-controller1.addEventListener("selectstart", () => {
 
-  tempMatrix.identity().extractRotation(controller1.matrixWorld);
-
-  raycaster.ray.origin.setFromMatrixPosition(controller1.matrixWorld);
-  raycaster.ray.direction.set(0, 0, -1).applyMatrix4(tempMatrix);
-
-  const intersects = raycaster.intersectObjects(uiGroup.children, true);
-
-  if (intersects.length > 0) {
-    const obj = intersects[0].object;
-
-    if (obj.userData.isButton) {
-      obj.userData.onClick();
-    }
-  }
-});
 
 renderer.xr.addEventListener('sessionend', () => {
   // VR終了時：マウス操作を復帰
