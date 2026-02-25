@@ -58,7 +58,6 @@ const menuData = [
 
 const uiGroup = new THREE.Group();
 uiGroup.position.set(0, -0.25, -1.5);
-uiGroup.renderOrder = 1000;
 camera.add(uiGroup);
 scene.add(camera);
 
@@ -89,7 +88,7 @@ const totalWidth =
   (menuData.length - 1) * spacing + BUTTON_W + 0.15; // 余白ちょい足し
 
 const menuBar = createMenuBar(totalWidth, 0.3);
-uiGroup.renderOrder = 9990;
+menuBar.renderOrder = 9990;
 uiGroup.add(menuBar);
 function createButton(data) {
 
@@ -117,7 +116,8 @@ function createButton(data) {
       depthWrite: false
     })
   );
-
+   
+  bg.renderOrder = 9991;
   group.add(bg);
 
   // アイコン
@@ -134,7 +134,7 @@ function createButton(data) {
   );
 
   icon.position.set(0, 0.04, 0.001);
-  uiGroup.renderOrder = 9991;
+  icon.renderOrder = 9992;
   group.add(icon);
 
   // テキストCanvas
@@ -167,7 +167,7 @@ function createButton(data) {
   );
 
   text.position.set(0, -0.05, 0.002);
-  uiGroup.renderOrder = 9992;
+  text.renderOrder = 9992;
   group.add(text);
 
   return group;
