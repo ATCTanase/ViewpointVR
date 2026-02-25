@@ -121,8 +121,6 @@ function createMenuButton(imageUrl, title, subtitle) {
 
   return group;
 }
-const menu = new THREE.Group();
-uiGroup.add(menu);
 
 const spacing = 0.45;
 
