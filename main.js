@@ -47,11 +47,11 @@ camera.position.set(0, 1.6, 3);
    UI
 ---------------------------------- */
 const menuData = [
-  { icon: "./icon/360.png", title: "360°画像", key: "F1" },
-  { icon: "./icon/Map.png", title: "MAP", key: "F2" },
-  { icon: "./icon/News.png", title: "情報", key: "F3" },
-  { icon: "./icon/Setting.png", title: "設定", key: "F4" },
-  { icon: "./icon/ExitApp.png", title: "終了", key: "F5" }
+  { icon: "./icon/360.png", title: "360°画像", key: "F1", action: () => open360() },
+  { icon: "./icon/Map.png", title: "MAP", key: "F2", action: () => openMap() },
+  { icon: "./icon/News.png", title: "情報", key: "F3", action: () => openInfo() },
+  { icon: "./icon/Setting.png", title: "設定", key: "F4", action: () => openSetting() },
+  { icon: "./icon/ExitApp.png", title: "終了", key: "F5", action: () => exitApp() }
 ];
 
 const uiGroup = new THREE.Group();
@@ -93,6 +93,16 @@ function createButton(data) {
 
   const group = new THREE.Group();
   const BUTTON_H = 0.18;
+  
+  const hitArea = new THREE.Mesh(
+    new THREE.PlaneGeometry(BUTTON_W, BUTTON_H),
+    new THREE.MeshBasicMaterial({ visible: false })
+  );
+
+  hitArea.userData.onClick = data.action;
+  hitArea.userData.isButton = true;
+
+  group.add(hitArea);
 
   // 背景
   const bg = new THREE.Mesh(
@@ -169,6 +179,26 @@ menuData.forEach((data, i) => {
 
   uiGroup.add(btn);
 });
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+
+window.addEventListener("click", (event) => {
+
+  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+  raycaster.setFromCamera(mouse, camera);
+
+  const intersects = raycaster.intersectObjects(uiGroup.children, true);
+
+  if (intersects.length > 0) {
+    const obj = intersects[0].object;
+
+    if (obj.userData.isButton) {
+      obj.userData.onClick();
+    }
+  }
+});
 
 /* ----------------------------------
    PC Controls (OrbitControls)
@@ -203,6 +233,8 @@ renderer.xr.addEventListener('sessionstart', () => {
   controller1 = renderer.xr.getController(0);
   controller2 = renderer.xr.getController(1);
   scene.add(controller1, controller2);
+  
+  const tempMatrix = new THREE.Matrix4();
 
   // controller model
   controllerGrip1 = renderer.xr.getControllerGrip(0);
@@ -217,6 +249,24 @@ renderer.xr.addEventListener('sessionstart', () => {
   );
   scene.add(controllerGrip2);
 
+});
+
+controller1.addEventListener("selectstart", () => {
+
+  tempMatrix.identity().extractRotation(controller1.matrixWorld);
+
+  raycaster.ray.origin.setFromMatrixPosition(controller1.matrixWorld);
+  raycaster.ray.direction.set(0, 0, -1).applyMatrix4(tempMatrix);
+
+  const intersects = raycaster.intersectObjects(uiGroup.children, true);
+
+  if (intersects.length > 0) {
+    const obj = intersects[0].object;
+
+    if (obj.userData.isButton) {
+      obj.userData.onClick();
+    }
+  }
 });
 
 renderer.xr.addEventListener('sessionend', () => {
