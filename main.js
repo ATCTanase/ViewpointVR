@@ -63,7 +63,7 @@ scene.add(camera);
 const menu = new THREE.Group();
 uiGroup.add(menu);
 const BUTTON_W = 0.18;
-const spacing = 0.22;
+const spacing = 0.21;
 
 function createMenuBar(width, height) {
   const geometry = new THREE.PlaneGeometry(width, height);
@@ -88,7 +88,7 @@ function createMenuBar(width, height) {
 const totalWidth =
   (menuData.length - 1) * spacing + BUTTON_W + 0.15; // 余白ちょい足し
 
-const menuBar = createMenuBar(totalWidth, 0.5);
+const menuBar = createMenuBar(totalWidth, 0.3);
 menuBar.position.z = -0.01;
 uiGroup.add(menuBar);
 function createButton(data) {
