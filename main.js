@@ -72,16 +72,14 @@ function createMenuBar(width, height) {
     color: 0x2f5f75,
     transparent: true,
     opacity: 0.85,
-    depthTest: false,
-    depthWrite: false
+    depthTest: true,
+    depthWrite: true
   });
 
   const bar = new THREE.Mesh(
     new THREE.PlaneGeometry(width, height),
     material
   );
-  bar.renderOrder = 1;
-
   return bar;
 }
 
@@ -108,7 +106,6 @@ function createButton(data) {
     })
   );
 
-  bg.renderOrder = 2;
   group.add(bg);
 
   // アイコン
@@ -125,7 +122,7 @@ function createButton(data) {
   );
 
   icon.position.set(0, 0.04, 0.001);
-  icon.renderOrder = 3;
+  group.position.z = 0.01;
   group.add(icon);
 
   // テキストCanvas
@@ -158,8 +155,6 @@ function createButton(data) {
   );
 
   text.position.set(0, -0.05, 0.002);
-  text.renderOrder = 4;
-
   group.add(text);
 
   return group;
