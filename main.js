@@ -71,11 +71,11 @@ function createMenuBar(width, height) {
   const geometry = new THREE.PlaneGeometry(width, height);
 
   const material = new THREE.MeshBasicMaterial({
-    color: 0x2f5f75,
-    transparent: true,
-    opacity: 0.85,
-    depthTest: true,
-    depthWrite: true
+      color: 0x2f5f75,
+      transparent: true,
+      opacity: 0.85,
+      depthTest: false,
+      depthWrite: false
   });
 
   const bar = new THREE.Mesh(
@@ -89,7 +89,7 @@ const totalWidth =
   (menuData.length - 1) * spacing + BUTTON_W + 0.15; // 余白ちょい足し
 
 const menuBar = createMenuBar(totalWidth, 0.3);
-menuBar.position.z = -0.01;
+uiGroup.renderOrder = 9999;
 uiGroup.add(menuBar);
 function createButton(data) {
 
@@ -113,8 +113,8 @@ function createButton(data) {
       color: 0x5aa0bd,
       transparent: true,
       opacity: 0.95,
-      depthTest: true,
-      depthWrite: true
+      depthTest: false,
+      depthWrite: false
     })
   );
 
@@ -128,8 +128,8 @@ function createButton(data) {
     new THREE.MeshBasicMaterial({
       map: texture,
       transparent: true,
-      depthTest: true,
-      depthWrite: true
+      depthTest: false,
+      depthWrite: false
     })
   );
 
@@ -161,8 +161,8 @@ function createButton(data) {
     new THREE.MeshBasicMaterial({
       map: textTexture,
       transparent: true,
-      depthTest: true,
-      depthWrite: true
+      depthTest: false,
+      depthWrite: false
     })
   );
 
@@ -237,6 +237,20 @@ renderer.xr.addEventListener('sessionstart', () => {
 
   controls.enabled = false;
   world.position.set(0, 0, -3);
+
+    // 表示用（見える）
+  controllerGrip1 = renderer.xr.getControllerGrip(0);
+  controllerGrip1.add(
+    controllerModelFactory.createControllerModel(controllerGrip1)
+  ); 
+  controllerGrip2 = renderer.xr.getControllerGrip(1);
+  controllerGrip2.add(
+    controllerModelFactory.createControllerModel(controllerGrip2)
+  );
+  
+  controllerGrip1.renderOrder = 10000;
+  controllerGrip2.renderOrder = 10000;
+  scene.add(controllerGrip1,controllerGrip2);
 
   controller1 = renderer.xr.getController(0);
   controller2 = renderer.xr.getController(1);
