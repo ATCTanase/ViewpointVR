@@ -62,8 +62,10 @@ scene.add(camera);
 
 const menu = new THREE.Group();
 uiGroup.add(menu);
+const BUTTON_W = 0.18;
+const spacing = 0.15;
 
-function createMenuBar(width = 1.5, height = 0.28) {
+function createMenuBar(width, height) {
   const geometry = new THREE.PlaneGeometry(width, height);
 
   const material = new THREE.MeshBasicMaterial({
@@ -83,14 +85,15 @@ function createMenuBar(width = 1.5, height = 0.28) {
   return bar;
 }
 
+const totalWidth =
+  (menuData.length - 1) * spacing + BUTTON_W + 0.15; // 余白ちょい足し
 
-const menuBar = createMenuBar();
+const menuBar = createMenuBar(totalWidth, 0.24);
+menuBar.position.z = -0.01;
 uiGroup.add(menuBar);
 function createButton(data) {
 
   const group = new THREE.Group();
-
-  const BUTTON_W = 0.18;
   const BUTTON_H = 0.18;
 
   // 背景
@@ -161,8 +164,6 @@ function createButton(data) {
 
   return group;
 }
-
-const spacing = 0.15;
 
 menuData.forEach((data, i) => {
 
