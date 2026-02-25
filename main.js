@@ -6,7 +6,7 @@ import { XRControllerModelFactory } from 'three/examples/webxr/XRControllerModel
 
 const controllerModelFactory = new XRControllerModelFactory();
 
-let rightController = null;
+let rightInputSource = null;
 const moveSpeed = 3.0; 
 
 let controller1, controller2;
@@ -111,8 +111,8 @@ function createButton(data) {
       color: 0x5aa0bd,
       transparent: true,
       opacity: 0.95,
-      depthTest: false,
-      depthWrite: false
+      depthTest: true,
+      depthWrite: true
     })
   );
 
@@ -126,8 +126,8 @@ function createButton(data) {
     new THREE.MeshBasicMaterial({
       map: texture,
       transparent: true,
-      depthTest: false,
-      depthWrite: false
+      depthTest: true,
+      depthWrite: true
     })
   );
 
@@ -159,8 +159,8 @@ function createButton(data) {
     new THREE.MeshBasicMaterial({
       map: textTexture,
       transparent: true,
-      depthTest: false,
-      depthWrite: false
+      depthTest: true,
+      depthWrite: true
     })
   );
 
@@ -199,6 +199,25 @@ window.addEventListener("click", (event) => {
     }
   }
 });
+function open360() {
+  console.log("360");
+}
+
+function openMap() {
+  console.log("MAP");
+}
+
+function openInfo() {
+  console.log("情報");
+}
+
+function openSetting() {
+  console.log("設定");
+}
+
+function exitApp() {
+  console.log("終了");
+}
 
 /* ----------------------------------
    PC Controls (OrbitControls)
@@ -234,6 +253,33 @@ renderer.xr.addEventListener('sessionstart', () => {
   controller2 = renderer.xr.getController(1);
   scene.add(controller1, controller2);
   
+  const geometry = new THREE.BufferGeometry().setFromPoints([
+  new THREE.Vector3(0, 0, 0),
+  new THREE.Vector3(0, 0, -1)
+]);
+
+const material = new THREE.LineBasicMaterial({ color: 0x00ffcc });
+
+const laser = new THREE.Line(geometry, material);
+laser.name = "laser";
+laser.scale.z = 5; // 長さ
+if (renderer.xr.isPresenting && controller1) {
+
+  tempMatrix.identity().extractRotation(controller1.matrixWorld);
+
+  raycaster.ray.origin.setFromMatrixPosition(controller1.matrixWorld);
+  raycaster.ray.direction.set(0, 0, -1).applyMatrix4(tempMatrix);
+
+  const intersects = raycaster.intersectObjects(uiGroup.children, true);
+
+  const laser = controller1.getObjectByName("laser");
+
+  if (intersects.length > 0) {
+    laser.scale.z = intersects[0].distance;
+  } else {
+    laser.scale.z = 5;
+  }
+}
   const tempMatrix = new THREE.Matrix4();
 
   // controller model
