@@ -193,13 +193,16 @@ window.addEventListener("click", (event) => {
 
   const intersects = raycaster.intersectObjects(uiGroup.children, true);
 
-  if (intersects.length > 0) {
-    const obj = intersects[0].object;
-
-    if (obj.userData.isButton) {
-      obj.userData.onClick();
-    }
-  }
+   for (let i = 0; i < intersects.length; i++) {
+      let obj = intersects[i].object;
+      while (obj) {
+         if (obj.userData?.isButton) {
+            obj.userData.onClick();
+            return;
+         }
+         obj = obj.parent;
+      }
+   }
 });
 function open360() {
   console.log("360");
@@ -279,13 +282,16 @@ renderer.xr.addEventListener('sessionstart', () => {
 
     const intersects = raycaster.intersectObjects(uiGroup.children, true);
 
-    if (intersects.length > 0) {
-      const obj = intersects[0].object;
-
-      if (obj.userData.isButton) {
-        obj.userData.onClick();
+   for (let i = 0; i < intersects.length; i++) {
+      let obj = intersects[i].object;
+      while (obj) {
+         if (obj.userData?.isButton) {
+            obj.userData.onClick();
+            return;
+         }
+         obj = obj.parent;
       }
-    }
+   }
   });
 });
 
