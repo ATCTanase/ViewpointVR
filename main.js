@@ -232,85 +232,45 @@ controls.update();
    XR session switch
 ---------------------------------- */
 renderer.xr.addEventListener('sessionstart', () => {
-  // VR開始時：マウス操作を無効化
+
   controls.enabled = false;
   world.position.set(0, 0, -3);
 
- 
-  const session = renderer.xr.getSession();
-
-  // 右手InputSource取得
-  session.addEventListener('inputsourceschange', () => {
-    session.inputSources.forEach((source) => {
-      if (source.handedness === 'right' && source.gamepad) {
-        rightInputSource = source;
-      }
-    });
-  });
-
-  // controller input object
   controller1 = renderer.xr.getController(0);
   controller2 = renderer.xr.getController(1);
   scene.add(controller1, controller2);
-  
+
+  // レーザー作成
   const geometry = new THREE.BufferGeometry().setFromPoints([
-  new THREE.Vector3(0, 0, 0),
-  new THREE.Vector3(0, 0, -1)
-]);
+    new THREE.Vector3(0, 0, 0),
+    new THREE.Vector3(0, 0, -1)
+  ]);
 
-const material = new THREE.LineBasicMaterial({ color: 0x00ffcc });
+  const material = new THREE.LineBasicMaterial({ color: 0x00ffcc });
 
-const laser = new THREE.Line(geometry, material);
-laser.name = "laser";
-laser.scale.z = 5; // 長さ
-if (renderer.xr.isPresenting && controller1) {
+  laser = new THREE.Line(geometry, material);
+  laser.scale.z = 5;
 
-  tempMatrix.identity().extractRotation(controller1.matrixWorld);
+  controller1.add(laser);
 
-  raycaster.ray.origin.setFromMatrixPosition(controller1.matrixWorld);
-  raycaster.ray.direction.set(0, 0, -1).applyMatrix4(tempMatrix);
+  // トリガー押下
+  controller1.addEventListener("selectstart", () => {
 
-  const intersects = raycaster.intersectObjects(uiGroup.children, true);
+    tempMatrix.identity().extractRotation(controller1.matrixWorld);
 
-  const laser = controller1.getObjectByName("laser");
+    raycaster.ray.origin.setFromMatrixPosition(controller1.matrixWorld);
+    raycaster.ray.direction.set(0, 0, -1).applyMatrix4(tempMatrix);
 
-  if (intersects.length > 0) {
-    laser.scale.z = intersects[0].distance;
-  } else {
-    laser.scale.z = 5;
-  }
-}
-  const tempMatrix = new THREE.Matrix4();
+    const intersects = raycaster.intersectObjects(uiGroup.children, true);
 
-  // controller model
-  controllerGrip1 = renderer.xr.getControllerGrip(0);
-  controllerGrip1.add(
-    controllerModelFactory.createControllerModel(controllerGrip1)
-  );
-  scene.add(controllerGrip1);
-
-  controllerGrip2 = renderer.xr.getControllerGrip(1);
-  controllerGrip2.add(
-    controllerModelFactory.createControllerModel(controllerGrip2)
-  );
-  scene.add(controllerGrip2);
-   controller1.addEventListener("selectstart", () => {
-
-   tempMatrix.identity().extractRotation(controller1.matrixWorld);
-
-   raycaster.ray.origin.setFromMatrixPosition(controller1.matrixWorld);
-   raycaster.ray.direction.set(0, 0, -1).applyMatrix4(tempMatrix);
-
-   const intersects = raycaster.intersectObjects(uiGroup.children, true);
-
-   if (intersects.length > 0) {
+    if (intersects.length > 0) {
       const obj = intersects[0].object;
 
       if (obj.userData.isButton) {
-         obj.userData.onClick();
+        obj.userData.onClick();
       }
-   }
-   });
+    }
+  });
 });
 
 
@@ -411,7 +371,21 @@ renderer.setAnimationLoop(() => {
       });
     }
   }
+if (renderer.xr.isPresenting && controller1 && laser) {
 
+  tempMatrix.identity().extractRotation(controller1.matrixWorld);
+
+  raycaster.ray.origin.setFromMatrixPosition(controller1.matrixWorld);
+  raycaster.ray.direction.set(0, 0, -1).applyMatrix4(tempMatrix);
+
+  const intersects = raycaster.intersectObjects(uiGroup.children, true);
+
+  if (intersects.length > 0) {
+    laser.scale.z = intersects[0].distance;
+  } else {
+    laser.scale.z = 5;
+  }
+}
   if (controls.enabled) {
     controls.update(); // PC操作時のみ
   }
