@@ -115,12 +115,17 @@ splat.position.set(8, 0, -130);
 world.add(splat);
 
 // ロード確認
-splat.ready.then(() => {
+await splat.load();
+splat.onLoad = () => {
+  console.log("Gaussian Splat loaded");
    console.log(splat.material);
    console.log(splat.material.uniforms);
-  console.log('Gaussian Splat loaded');
-});
-
+};
+setTimeout(() => {
+  console.log("setTimeout");
+  console.log(splat.material);
+  console.log(splat.material?.uniforms);
+}, 2000);
 
 /* ----------------------------------
    Resize
