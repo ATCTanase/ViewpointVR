@@ -63,7 +63,7 @@ scene.add(camera);
 const menu = new THREE.Group();
 uiGroup.add(menu);
 
-function createMenuBar(width = 1, height = 0.28) {
+function createMenuBar(width = 1.5, height = 0.28) {
   const geometry = new THREE.PlaneGeometry(width, height);
 
   const material = new THREE.MeshBasicMaterial({
@@ -78,9 +78,7 @@ function createMenuBar(width = 1, height = 0.28) {
     new THREE.PlaneGeometry(width, height),
     material
   );
-
-  bar.renderOrder = 1000;
-  bar.position.z = -0.001; // ← ボタンより少し後ろ
+  bar.renderOrder = 1;
 
   return bar;
 }
@@ -107,7 +105,7 @@ function createButton(data) {
     })
   );
 
-  bg.renderOrder = 1001;
+  bg.renderOrder = 2;
   group.add(bg);
 
   // アイコン
@@ -124,7 +122,7 @@ function createButton(data) {
   );
 
   icon.position.set(0, 0.04, 0.001);
-  icon.renderOrder = 1002;
+  icon.renderOrder = 3;
   group.add(icon);
 
   // テキストCanvas
@@ -157,14 +155,14 @@ function createButton(data) {
   );
 
   text.position.set(0, -0.05, 0.002);
-  text.renderOrder = 1003;
+  text.renderOrder = 4;
 
   group.add(text);
 
   return group;
 }
 
-const spacing = 0.1;
+const spacing = 0.15;
 
 menuData.forEach((data, i) => {
 
