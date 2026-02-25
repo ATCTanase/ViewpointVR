@@ -2,8 +2,7 @@ import * as THREE from 'three';
 import { VRButton } from 'three/examples/webxr/VRButton.js';
 import { OrbitControls } from 'three/examples/controls/OrbitControls.js';
 import { SplatMesh } from '@sparkjsdev/spark';
-import { XRControllerModelFactory } from 'three/examples/jsm/webxr/XRControllerModelFactory.js';
-
+import { XRControllerModelFactory } from 'three/examples/webxr/XRControllerModelFactory.js';
 
 const controllerModelFactory = new XRControllerModelFactory();
 
