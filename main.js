@@ -110,12 +110,10 @@ const splat = new SplatMesh({
 // ★ 最重要：位置とスケール
 splat.rotation.set(-Math.PI / 2, -Math.PI / 2, 0, "YXZ");
 splat.position.set(8, 0, -130);
-splat.context.transform.scale.set(1.5);
 //splat.scale.setScalar(0.02);
 world.add(splat);
 
 console.log(splat);
-console.dir(splat);
 
 // ロード確認
 splat.onLoad = () => {
