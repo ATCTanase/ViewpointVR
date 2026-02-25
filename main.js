@@ -63,7 +63,7 @@ scene.add(camera);
 const menu = new THREE.Group();
 uiGroup.add(menu);
 
-function createMenuBar(width = 1.4, height = 0.28) {
+function createMenuBar(width = 1, height = 0.28) {
   const geometry = new THREE.PlaneGeometry(width, height);
 
   const material = new THREE.MeshBasicMaterial({
@@ -137,11 +137,11 @@ function createButton(data) {
 
   ctx.textAlign = "center";
   ctx.fillStyle = "white";
-  ctx.font = "bold 42px sans-serif";
+  ctx.font = "bold 84px sans-serif";
   ctx.fillText(data.title, 256, 150);
 
   ctx.fillStyle = "#d0e6f0";
-  ctx.font = "26px sans-serif";
+  ctx.font = "42px sans-serif";
   ctx.fillText(data.key, 256, 200);
 
   const textTexture = new THREE.CanvasTexture(canvas);
@@ -164,7 +164,7 @@ function createButton(data) {
   return group;
 }
 
-const spacing = 0.22;
+const spacing = 0.1;
 
 menuData.forEach((data, i) => {
 
