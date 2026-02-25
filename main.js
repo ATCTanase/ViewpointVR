@@ -7,7 +7,7 @@ import { XRControllerModelFactory } from 'three/examples/webxr/XRControllerModel
 const controllerModelFactory = new XRControllerModelFactory();
 
 let rightController = null;
-const moveSpeed = 2.0; 
+const moveSpeed = 3.0; 
 
 let controller1, controller2;
 let controllerGrip1, controllerGrip2;
@@ -129,9 +129,6 @@ splat.position.set(8, 0, -130);
 //splat.scale.setScalar(0.02);
 world.add(splat);
 
-console.log(splat);
-console.log(splat.material);
-
 // ロード確認
 splat.onLoad = () => {
   console.log("Gaussian Splat loaded");
@@ -163,27 +160,26 @@ renderer.setAnimationLoop(() => {
     if (session) {
 
       session.inputSources.forEach((source) => {
-
         if (source.handedness === 'right' && source.gamepad) {
 
           const axes = source.gamepad.axes;
 
-          // Quest系は [2],[3] が右スティック
-          const x = axes[2] ?? 0;
-          const y = axes[3] ?? 0;
+          const x = axes[2] ?? 0;  // 右スティック左右
+          const y = axes[3] ?? 0;  // 右スティック前後
 
           if (Math.abs(x) > 0.1 || Math.abs(y) > 0.1) {
 
-            const dir = new THREE.Vector3();
-            camera.getWorldDirection(dir);
-            dir.y = 0;
-            dir.normalize();
+            const forward = new THREE.Vector3();
+            camera.getWorldDirection(forward);
 
-            const right = new THREE.Vector3()
-              .crossVectors(dir, camera.up)
-              .normalize();
+            forward.y = 0;
+            forward.normalize();
 
-            world.position.addScaledVector(dir, -y * moveSpeed * delta);
+            const right = new THREE.Vector3();
+            right.crossVectors(camera.up, forward).normalize(); 
+
+            // ---- 符号修正 ----
+            world.position.addScaledVector(forward, y * moveSpeed * delta);
             world.position.addScaledVector(right, x * moveSpeed * delta);
           }
         }
