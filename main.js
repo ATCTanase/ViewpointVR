@@ -6,6 +6,9 @@ import { XRControllerModelFactory } from 'three/examples/webxr/XRControllerModel
 
 const controllerModelFactory = new XRControllerModelFactory();
 
+let rightController = null;
+const moveSpeed = 2.0; 
+
 let controller1, controller2;
 let controllerGrip1, controllerGrip2;
 
@@ -56,13 +59,24 @@ renderer.xr.addEventListener('sessionstart', () => {
   controls.enabled = false;
   world.position.set(0, 0, -3);
 
-    // ---- controller input ----
+ 
+  const session = renderer.xr.getSession();
+
+  // 右手InputSource取得
+  session.addEventListener('inputsourceschange', () => {
+    session.inputSources.forEach((source) => {
+      if (source.handedness === 'right' && source.gamepad) {
+        rightInputSource = source;
+      }
+    });
+  });
+
+  // controller input object
   controller1 = renderer.xr.getController(0);
   controller2 = renderer.xr.getController(1);
-  scene.add(controller1);
-  scene.add(controller2);
+  scene.add(controller1, controller2);
 
-  // ---- controller model ----
+  // controller model
   controllerGrip1 = renderer.xr.getControllerGrip(0);
   controllerGrip1.add(
     controllerModelFactory.createControllerModel(controllerGrip1)
@@ -74,6 +88,7 @@ renderer.xr.addEventListener('sessionstart', () => {
     controllerModelFactory.createControllerModel(controllerGrip2)
   );
   scene.add(controllerGrip2);
+
 });
 
 renderer.xr.addEventListener('sessionend', () => {
@@ -81,10 +96,10 @@ renderer.xr.addEventListener('sessionend', () => {
   controls.enabled = true;
   controls.update();
 
-  if (controller1) scene.remove(controller1);
-  if (controller2) scene.remove(controller2);
-  if (controllerGrip1) scene.remove(controllerGrip1);
-  if (controllerGrip2) scene.remove(controllerGrip2);
+  scene.remove(controller1, controller2);
+  scene.remove(controllerGrip1, controllerGrip2);
+
+  rightInputSource = null;
 
 });
 
@@ -137,6 +152,35 @@ window.addEventListener('resize', () => {
    Render loop
 ---------------------------------- */
 renderer.setAnimationLoop(() => {
+   const delta = renderer.xr.isPresenting
+    ? renderer.xr.getFrame().getViewerPose(renderer.xr.getReferenceSpace())
+    : null;
+
+  if (renderer.xr.isPresenting && rightController?.gamepad) {
+
+    const axes = rightController.gamepad.axes;
+
+    // 右スティックは通常 axes[2], axes[3]
+    const x = axes[2] || 0; // 左右
+    const y = axes[3] || 0; // 前後
+
+    const dt = renderer.xr.getSession()
+      ? renderer.xr.getSession().frameRate ? 1/renderer.xr.getSession().frameRate : 0.016
+      : 0.016;
+
+    // カメラの向き基準で移動
+    const dir = new THREE.Vector3();
+    camera.getWorldDirection(dir);
+
+    const right = new THREE.Vector3()
+      .crossVectors(dir, camera.up)
+      .normalize();
+
+    world.position.addScaledVector(dir, y * moveSpeed * dt);
+    world.position.addScaledVector(right, x * moveSpeed * dt);
+  }
+
+
   if (controls.enabled) {
     controls.update(); // PC操作時のみ
   }
