@@ -349,27 +349,33 @@ function createBillboardButton({ position, iconUrl, title, popupImageUrl }) {
   const group = new THREE.Group();
   group.position.copy(position);
 
-  // ===== 本体 =====
+  const BUTTON_SIZE = 0.35;
+
   const bgMat = new THREE.MeshBasicMaterial({
     color: 0x5aa0bd,
     transparent: true
   });
 
   const bg = new THREE.Mesh(
-    new THREE.PlaneGeometry(0.4, 0.2),
+    new THREE.PlaneGeometry(BUTTON_SIZE, BUTTON_SIZE),
     bgMat
   );
 
   group.add(bg);
 
   // アイコン
-  const iconTex = new THREE.TextureLoader().load(iconUrl);
+  const iconSize = 0.16;
+
   const icon = new THREE.Mesh(
-    new THREE.PlaneGeometry(0.1, 0.1),
-    new THREE.MeshBasicMaterial({ map: iconTex, transparent: true })
+    new THREE.PlaneGeometry(iconSize, iconSize),
+    new THREE.MeshBasicMaterial({
+      map: iconTex,
+      transparent: true
+    })
   );
-  icon.position.set(-0.12, 0.02, 0.01);
-  group.add(icon);
+
+icon.position.set(0, 0.07, 0.01);
+group.add(icon);
 
   // タイトル
   const canvas = document.createElement("canvas");
@@ -383,24 +389,40 @@ function createBillboardButton({ position, iconUrl, title, popupImageUrl }) {
   ctx.fillText(title, 40, 140);
 
   const textTex = new THREE.CanvasTexture(canvas);
-
   const text = new THREE.Mesh(
-    new THREE.PlaneGeometry(0.25, 0.12),
-    new THREE.MeshBasicMaterial({ map: textTex, transparent: true })
+    new THREE.PlaneGeometry(0.28, 0.10),
+    new THREE.MeshBasicMaterial({
+      map: textTex,
+      transparent: true
+    })
   );
-  text.position.set(0.05, -0.02, 0.01);
+
+  text.position.set(0, -0.10, 0.01);
   group.add(text);
 
   // ===== ポップアップ =====
-  const popupTex = new THREE.TextureLoader().load(popupImageUrl);
+  const loader = new THREE.TextureLoader();
 
-  const popup = new THREE.Mesh(
-    new THREE.PlaneGeometry(0.9, 0.55),
-    new THREE.MeshBasicMaterial({ map: popupTex, transparent: true })
-  );
-
-  popup.position.set(0, 0.55, 0);
+  const popup = new THREE.Mesh();
+  popup.position.set(0, 0.6, 0);
   popup.visible = false;
+
+  loader.load(popupImageUrl, (texture) => {
+
+    const image = texture.image;
+    const aspect = image.width / image.height;
+
+    const baseHeight = 0.6;   // 基準高さ
+    const width = baseHeight * aspect;
+    const height = baseHeight;
+
+    popup.geometry = new THREE.PlaneGeometry(width, height);
+    popup.material = new THREE.MeshBasicMaterial({
+      map: texture,
+      transparent: true
+    });
+
+  });
 
   group.add(popup);
 
