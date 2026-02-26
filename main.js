@@ -498,8 +498,9 @@ window.addEventListener("keydown", (e) => {
     }
   });
 
+const velocity = new THREE.Vector3();
 function updateMovement(delta) {
-  
+
   velocity.set(0, 0, 0);
 
   if (keys.forward) velocity.z -= 1;
