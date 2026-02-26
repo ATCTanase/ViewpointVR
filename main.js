@@ -464,6 +464,7 @@ let yaw = 0;
 let pitch = 0;
 
 const sensitivity = 0.002;
+let isDragging = false;
 
 
 renderer.domElement.addEventListener("mousedown", () => {
