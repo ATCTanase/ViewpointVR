@@ -501,6 +501,9 @@ window.addEventListener("keydown", (e) => {
 const velocity = new THREE.Vector3();
 function updateMovement(delta) {
 
+  if (!isPC) return;
+  if (renderer.xr.isPresenting) return;
+
   velocity.set(0, 0, 0);
 
   if (keys.forward) velocity.z -= 1;
@@ -508,17 +511,27 @@ function updateMovement(delta) {
   if (keys.left) velocity.x -= 1;
   if (keys.right) velocity.x += 1;
 
+  if (velocity.lengthSq() === 0) return;
+
   velocity.normalize();
 
-  // カメラの向き取得
-  const forward = new THREE.Vector3();
-  camera.getWorldDirection(forward);
+  // 🔥 カメラのY回転だけ取得
+  const euler = new THREE.Euler(0, 0, 0, "YXZ");
+  euler.setFromQuaternion(camera.quaternion);
 
-  forward.y = 0; // 上下無視
-  forward.normalize();
+  const yaw = euler.y;
 
-  const right = new THREE.Vector3();
-  right.crossVectors(forward, camera.up).normalize();
+  const forward = new THREE.Vector3(
+    -Math.sin(yaw),
+    0,
+    -Math.cos(yaw)
+  );
+
+  const right = new THREE.Vector3(
+    Math.cos(yaw),
+    0,
+    -Math.sin(yaw)
+  );
 
   const move = new THREE.Vector3();
   move.addScaledVector(forward, velocity.z);
