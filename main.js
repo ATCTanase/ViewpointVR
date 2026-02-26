@@ -500,8 +500,6 @@ window.addEventListener("keydown", (e) => {
 
 const velocity = new THREE.Vector3();
 function updateMovement(delta) {
-
-  if (!isPC) return;
   if (renderer.xr.isPresenting) return;
 
   velocity.set(0, 0, 0);
