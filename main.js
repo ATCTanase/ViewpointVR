@@ -433,6 +433,7 @@ scene.add(new THREE.AmbientLight(0xffffff, 1.0));
 const splat = new SplatMesh({
   url: './point_cloud_alpha_voxel_200k.ply',   // ← 自分の PLY
   pointSize: 0.04,
+  splatScale: 1.2,
   alphaTest: 0.003
 });
 
@@ -441,6 +442,8 @@ splat.rotation.set(-Math.PI / 2, -Math.PI / 2, 0, "YXZ");
 splat.position.set(8, 0, -130);
 //splat.scale.setScalar(0.02);
 world.add(splat);
+console.log(splat);
+console.log(splat.uniforms);
 
 // ロード確認
 splat.onLoad = () => {
