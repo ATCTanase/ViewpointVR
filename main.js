@@ -432,6 +432,7 @@ scene.add(new THREE.AmbientLight(0xffffff, 1.0));
 ---------------------------------- */
 const splat = new SplatMesh({
   url: './point_cloud_alpha_voxel_200k.ply',   // ← 自分の PLY
+  pointSize: 0.04,
   alphaTest: 0.003
 });
 
