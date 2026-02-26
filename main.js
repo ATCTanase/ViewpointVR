@@ -385,7 +385,7 @@ group.add(icon);
   const ctx = canvas.getContext("2d");
 
   ctx.fillStyle = "white";
-  ctx.font = "bold 120px sans-serif";
+  ctx.font = "bold 100px sans-serif";
   ctx.textAlign = "left";
   ctx.fillText(title, 40, 140);
 
@@ -441,7 +441,7 @@ group.add(icon);
 world.add(createBillboardButton({
   position: new THREE.Vector3(0, 1.5, -3),
   iconUrl: "./icon/Info.png",
-  title: "360度画像",
+  title: "360°画像",
   popupImageUrl: "./Image/360_Image.png"
 }));
 
