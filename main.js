@@ -370,7 +370,8 @@ function createBillboardButton({ position, iconUrl, title, popupImageUrl }) {
     new THREE.PlaneGeometry(iconSize, iconSize),
     new THREE.MeshBasicMaterial({
       map: iconTex,
-      transparent: true
+      transparent: true,
+      alphaTest: 0.01
     })
   );
 
@@ -384,7 +385,7 @@ group.add(icon);
   const ctx = canvas.getContext("2d");
 
   ctx.fillStyle = "white";
-  ctx.font = "bold 80px sans-serif";
+  ctx.font = "bold 160px sans-serif";
   ctx.textAlign = "left";
   ctx.fillText(title, 40, 140);
 
@@ -393,7 +394,8 @@ group.add(icon);
     new THREE.PlaneGeometry(0.28, 0.10),
     new THREE.MeshBasicMaterial({
       map: textTex,
-      transparent: true
+      transparent: true,
+      alphaTest: 0.01
     })
   );
 
