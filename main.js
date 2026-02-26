@@ -365,7 +365,7 @@ function createBillboardButton({ position, iconUrl, title, popupImageUrl }) {
 
   // アイコン
   const iconSize = 0.16;
-
+  const iconTex = new THREE.TextureLoader().load(iconUrl);
   const icon = new THREE.Mesh(
     new THREE.PlaneGeometry(iconSize, iconSize),
     new THREE.MeshBasicMaterial({
