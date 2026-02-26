@@ -211,6 +211,7 @@ function open360() {
 
 function openMap() {
   console.log("MAP");
+  mapGroup.visible = !mapGroup.visible;
 }
 
 function openInfo() {
@@ -224,6 +225,33 @@ function openSetting() {
 function exitApp() {
   console.log("終了");
 }
+
+// ---------------------------
+// Map UI
+// ---------------------------
+const mapGroup = new THREE.Group();
+camera.add(mapGroup);
+
+// 左上配置（視界の左上）
+mapGroup.position.set(-0.6, 0.35, -1.2);
+
+const mapTexture = new THREE.TextureLoader().load("./map.png");
+
+const mapMesh = new THREE.Mesh(
+  new THREE.PlaneGeometry(0.4, 0.4),
+  new THREE.MeshBasicMaterial({
+    map: mapTexture,
+    transparent: true,
+    depthTest: false,
+    depthWrite: false
+  })
+);
+
+mapGroup.add(mapMesh);
+
+// 初期は非表示
+mapGroup.visible = false;
+
 
 /* ----------------------------------
    PC Controls (OrbitControls)
