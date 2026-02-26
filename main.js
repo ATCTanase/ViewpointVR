@@ -235,7 +235,7 @@ camera.add(mapGroup);
 // 左上配置（視界の左上）
 mapGroup.position.set(-0.6, 0.35, -1.2);
 
-const mapTexture = new THREE.TextureLoader().load("./map.png");
+const mapTexture = new THREE.TextureLoader().load("./Map/MAP.png");
 
 const mapMesh = new THREE.Mesh(
   new THREE.PlaneGeometry(0.4, 0.4),
