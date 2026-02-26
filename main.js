@@ -503,56 +503,56 @@ renderer.xr.addEventListener('sessionstart', () => {
   ];
   const intersects = raycaster.intersectObjects(targets, true);
 
-  for (let i = 0; i < intersects.length; i++) {
+    for (let i = 0; i < intersects.length; i++) {
 
-    let obj = intersects[i].object;
+      let obj = intersects[i].object;
 
-    while (obj) {
+      while (obj) {
 
-      // =========================
-      // HUDボタン
-      // =========================
-      if (obj.userData?.isButton) {
+        // =========================
+        // HUDボタン
+        // =========================
+        if (obj.userData?.isButton) {
 
-        const mat = obj.userData.bgMaterial;
+          const mat = obj.userData.bgMaterial;
 
-        mat.color.multiplyScalar(0.7);
+          mat.color.multiplyScalar(0.7);
 
-        setTimeout(() => {
-          mat.color.copy(obj.userData.defaultColor);
-        }, 120);
+          setTimeout(() => {
+            mat.color.copy(obj.userData.defaultColor);
+          }, 120);
 
-        obj.userData.onClick();
-        return;
-      }
-
-      // =========================
-      // Billboardボタン
-      // =========================
-      if (obj.userData?.isBillboardButton) {
-
-        const clicked = obj;
-
-        // 全部閉じる
-        billboardButtons.forEach(btn => {
-          btn.userData.popup.visible = false;
-          btn.userData.isOpen = false;
-        });
-
-        // 開いてなければ開く
-        if (!clicked.userData.isOpen) {
-          clicked.userData.popup.visible = true;
-          clicked.userData.isOpen = true;
+          obj.userData.onClick();
+          return;
         }
 
-        return;
+        // =========================
+        // Billboardボタン
+        // =========================
+        if (obj.userData?.isBillboardButton) {
+
+          const clicked = obj;
+
+          // 全部閉じる
+          billboardButtons.forEach(btn => {
+            btn.userData.popup.visible = false;
+            btn.userData.isOpen = false;
+          });
+
+          // 開いてなければ開く
+          if (!clicked.userData.isOpen) {
+            clicked.userData.popup.visible = true;
+            clicked.userData.isOpen = true;
+          }
+
+          return;
+        }
+
+        obj = obj.parent;
       }
-
-      obj = obj.parent;
     }
-  }
+  });
 });
-
 
 
 renderer.xr.addEventListener('sessionend', () => {
