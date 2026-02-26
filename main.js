@@ -489,8 +489,8 @@ window.addEventListener("mousemove", (event) => {
 
   if (!isDragging) return;
 
-  yaw -= e.movementX * sensitivity;
-  pitch -= e.movementY * sensitivity;
+  yaw -= event.movementX * sensitivity;
+  pitch -= event.movementY * sensitivity;
 
   // 上下制限
   pitch = Math.max(-Math.PI/2, Math.min(Math.PI/2, pitch));
