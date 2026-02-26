@@ -114,15 +114,11 @@ function createButton(data) {
       transparent: true,
       opacity: 0.95,
       depthTest: false,
-      depthWrite: false
+      depthWrite: false,
+      bgMaterial
     })
   );
   
-  const bg = new THREE.Mesh(
-    new THREE.PlaneGeometry(BUTTON_W, BUTTON_H),
-    bgMaterial
-  ); 
-
   bg.renderOrder = 9991;
   group.add(bg);
 
