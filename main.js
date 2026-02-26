@@ -456,9 +456,9 @@ world.add(createBillboardButton({
    PC Controls (OrbitControls)
 ---------------------------------- */
 const controls = new OrbitControls(camera, renderer.domElement);
-// controls.target.set(0, 1.5, 0);
-// controls.enableDamping = true;
-// controls.enabled = true;
+controls.target.set(0, 1.5, 0);
+controls.enableDamping = true;
+controls.enabled = true;
 controls.update();
 
 window.addEventListener("mousemove", (event) => {
@@ -502,6 +502,7 @@ const velocity = new THREE.Vector3();
 function updateMovement(delta) {
   if (renderer.xr.isPresenting) return;
 
+  controls.enabled = false;
   velocity.set(0, 0, 0);
 
   if (keys.forward) velocity.z -= 1;
