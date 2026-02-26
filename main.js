@@ -13,6 +13,7 @@ let controller1, controller2;
 let controllerGrip1, controllerGrip2;
 let tempMatrix = new THREE.Matrix4();
 let laser = null;
+let currentHover = null;
 
 /* ----------------------------------
    Renderer
@@ -116,9 +117,17 @@ function createButton(data) {
       depthWrite: false
     })
   );
-   
+  
+  const bg = new THREE.Mesh(
+    new THREE.PlaneGeometry(BUTTON_W, BUTTON_H),
+    bgMaterial
+  ); 
+
   bg.renderOrder = 9991;
   group.add(bg);
+
+  hitArea.userData.bgMaterial = bgMaterial;
+  hitArea.userData.defaultColor = new THREE.Color(0x5aa0bd);
 
   // アイコン
   const texture = new THREE.TextureLoader().load(data.icon);
@@ -197,14 +206,64 @@ window.addEventListener("click", (event) => {
    for (let i = 0; i < intersects.length; i++) {
       let obj = intersects[i].object;
       while (obj) {
-         if (obj.userData?.isButton) {
-            obj.userData.onClick();
-            return;
-         }
+        if (obj.userData?.isButton) {
+
+          const mat = obj.userData.bgMaterial;
+
+          mat.color.multiplyScalar(0.7); // 暗く
+
+          setTimeout(() => {
+            mat.color.copy(obj.userData.defaultColor);
+          }, 120);
+
+          obj.userData.onClick();
+          return;
+        }
          obj = obj.parent;
       }
    }
 });
+
+function updateHover(rayOrigin, rayDirection) {
+
+  raycaster.ray.origin.copy(rayOrigin);
+  raycaster.ray.direction.copy(rayDirection);
+
+  const intersects = raycaster.intersectObjects(uiGroup.children, true);
+
+  let hovered = null;
+
+  for (let i = 0; i < intersects.length; i++) {
+    let obj = intersects[i].object;
+
+    while (obj) {
+      if (obj.userData?.isButton) {
+        hovered = obj;
+        break;
+      }
+      obj = obj.parent;
+    }
+    if (hovered) break;
+  }
+
+  // 前回のホバー解除
+  if (currentHover && currentHover !== hovered) {
+    currentHover.userData.bgMaterial.color.copy(
+      currentHover.userData.defaultColor
+    );
+  }
+
+  // 新ホバー
+  if (hovered && hovered !== currentHover) {
+    const base = hovered.userData.defaultColor.clone();
+    hovered.userData.bgMaterial.color.copy(
+      base.multiplyScalar(1.3)
+    );
+  }
+
+  currentHover = hovered;
+}
+
 function open360() {
   console.log("360");
 }
@@ -262,6 +321,19 @@ controls.enableDamping = true;
 controls.enabled = true;
 controls.update();
 
+window.addEventListener("mousemove", (event) => {
+
+  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+  raycaster.setFromCamera(mouse, camera);
+
+  updateHover(
+    raycaster.ray.origin,
+    raycaster.ray.direction
+  );
+});
+
 /* ----------------------------------
    XR session switch
 ---------------------------------- */
@@ -314,11 +386,20 @@ renderer.xr.addEventListener('sessionstart', () => {
    for (let i = 0; i < intersects.length; i++) {
       let obj = intersects[i].object;
       while (obj) {
-         if (obj.userData?.isButton) {
-            obj.userData.onClick();
-            return;
-         }
-         obj = obj.parent;
+        if (obj.userData?.isButton) {
+
+          const mat = obj.userData.bgMaterial;
+
+          mat.color.multiplyScalar(0.7); // 暗く
+
+          setTimeout(() => {
+            mat.color.copy(obj.userData.defaultColor);
+          }, 120);
+
+          obj.userData.onClick();
+          return;
+        }
+        obj = obj.parent;
       }
    }
   });
@@ -437,6 +518,12 @@ if (renderer.xr.isPresenting && controller2 && laser) {
     laser.scale.z = 5;
   }
 }
+
+updateHover(
+  raycaster.ray.origin,
+  raycaster.ray.direction
+);
+
   if (controls.enabled) {
     controls.update(); // PC操作時のみ
   }
