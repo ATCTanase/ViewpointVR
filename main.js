@@ -16,6 +16,7 @@ let laser = null;
 let currentHover = null;
 
 const billboardButtons = [];
+const isPC = !("ontouchstart" in window) && navigator.maxTouchPoints === 0;
 
 /* ----------------------------------
    Renderer
@@ -473,6 +474,63 @@ window.addEventListener("mousemove", (event) => {
     raycaster.ray.direction
   );
 });
+const keys = {
+  forward: false,
+  backward: false,
+  left: false,
+  right: false
+};
+
+if (isPC) {
+  window.addEventListener("keydown", (e) => {
+    switch (e.code) {
+      case "KeyW": keys.forward = true; break;
+      case "KeyS": keys.backward = true; break;
+      case "KeyA": keys.left = true; break;
+      case "KeyD": keys.right = true; break;
+    }
+  });
+
+  window.addEventListener("keyup", (e) => {
+    switch (e.code) {
+      case "KeyW": keys.forward = false; break;
+      case "KeyS": keys.backward = false; break;
+      case "KeyA": keys.left = false; break;
+      case "KeyD": keys.right = false; break;
+    }
+  });
+}
+
+function updateMovement(delta) {
+  if (!isPC) return;
+  velocity.set(0, 0, 0);
+
+  if (keys.forward) velocity.z -= 1;
+  if (keys.backward) velocity.z += 1;
+  if (keys.left) velocity.x -= 1;
+  if (keys.right) velocity.x += 1;
+
+  velocity.normalize();
+
+  // カメラの向き取得
+  const forward = new THREE.Vector3();
+  camera.getWorldDirection(forward);
+
+  forward.y = 0; // 上下無視
+  forward.normalize();
+
+  const right = new THREE.Vector3();
+  right.crossVectors(forward, camera.up).normalize();
+
+  const move = new THREE.Vector3();
+  move.addScaledVector(forward, velocity.z);
+  move.addScaledVector(right, velocity.x);
+
+  move.multiplyScalar(moveSpeed * delta);
+
+  camera.position.add(move);
+}
+
 
 /* ----------------------------------
    XR session switch
@@ -706,6 +764,8 @@ billboardButtons.forEach(btn => {
   btn.lookAt(camPos);
 });
 
+
+  updateMovement(delta);
 
   if (controls.enabled) {
     controls.update(); // PC操作時のみ
