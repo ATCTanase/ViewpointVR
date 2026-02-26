@@ -385,7 +385,7 @@ group.add(icon);
   const ctx = canvas.getContext("2d");
 
   ctx.fillStyle = "white";
-  ctx.font = "bold 160px sans-serif";
+  ctx.font = "bold 120px sans-serif";
   ctx.textAlign = "left";
   ctx.fillText(title, 40, 140);
 
@@ -456,9 +456,9 @@ world.add(createBillboardButton({
    PC Controls (OrbitControls)
 ---------------------------------- */
 const controls = new OrbitControls(camera, renderer.domElement);
-controls.target.set(0, 1.5, 0);
-controls.enableDamping = true;
-controls.enabled = true;
+// controls.target.set(0, 1.5, 0);
+// controls.enableDamping = true;
+// controls.enabled = true;
 controls.update();
 
 window.addEventListener("mousemove", (event) => {
