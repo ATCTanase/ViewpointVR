@@ -107,16 +107,17 @@ function createButton(data) {
   group.add(hitArea);
 
   // 背景
+  const bgMaterial = new THREE.MeshBasicMaterial({
+    color: 0x5aa0bd,
+    transparent: true,
+    opacity: 0.95,
+    depthTest: false,
+    depthWrite: false
+  });
+
   const bg = new THREE.Mesh(
     new THREE.PlaneGeometry(BUTTON_W, BUTTON_H),
-    new THREE.MeshBasicMaterial({
-      color: 0x5aa0bd,
-      transparent: true,
-      opacity: 0.95,
-      depthTest: false,
-      depthWrite: false,
-      bgMaterial
-    })
+    bgMaterial
   );
   
   bg.renderOrder = 9991;
