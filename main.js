@@ -460,6 +460,19 @@ controls.target.set(0, 1.5, 0);
 controls.enableDamping = true;
 controls.enabled = true;
 controls.update();
+let yaw = 0;
+let pitch = 0;
+
+const sensitivity = 0.002;
+
+
+renderer.domElement.addEventListener("mousedown", () => {
+  isDragging = true;
+});
+
+window.addEventListener("mouseup", () => {
+  isDragging = false;
+});
 
 window.addEventListener("mousemove", (event) => {
 
@@ -472,7 +485,22 @@ window.addEventListener("mousemove", (event) => {
     raycaster.ray.origin,
     raycaster.ray.direction
   );
+
+  if (!isDragging) return;
+
+  yaw -= e.movementX * sensitivity;
+  pitch -= e.movementY * sensitivity;
+
+  // 上下制限
+  pitch = Math.max(-Math.PI/2, Math.min(Math.PI/2, pitch));
 });
+
+function updateCameraRotation() {
+  camera.rotation.order = "YXZ";
+  camera.rotation.y = yaw;
+  camera.rotation.x = pitch;
+}
+
 const keys = {
   forward: false,
   backward: false,
@@ -505,8 +533,8 @@ function updateMovement(delta) {
   controls.enabled = false;
   velocity.set(0, 0, 0);
 
-  if (keys.forward) velocity.z -= 1;
-  if (keys.backward) velocity.z += 1;
+  if (keys.forward) velocity.z += 1;
+  if (keys.backward) velocity.z -= 1;
   if (keys.left) velocity.x -= 1;
   if (keys.right) velocity.x += 1;
 
@@ -774,7 +802,7 @@ billboardButtons.forEach(btn => {
   btn.lookAt(camPos);
 });
 
-
+  updateCameraRotation();
   updateMovement(delta);
 
   if (controls.enabled) {
