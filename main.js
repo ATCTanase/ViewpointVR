@@ -200,44 +200,60 @@ window.addEventListener("click", (event) => {
 
   raycaster.setFromCamera(mouse, camera);
 
-  const intersects = raycaster.intersectObjects(uiGroup.children, true);
+  const targets = [
+    ...uiGroup.children,
+    ...billboardButtons
+  ];
+  const intersects = raycaster.intersectObjects(targets, true);
 
-   for (let i = 0; i < intersects.length; i++) {
-      let obj = intersects[i].object;
-      while (obj) {
-        if (obj.userData?.isButton) {
+  for (let i = 0; i < intersects.length; i++) {
 
-          const mat = obj.userData.bgMaterial;
+    let obj = intersects[i].object;
 
-          mat.color.multiplyScalar(0.7); // 暗く
+    while (obj) {
 
-          setTimeout(() => {
-            mat.color.copy(obj.userData.defaultColor);
-          }, 120);
+      // =========================
+      // HUDボタン
+      // =========================
+      if (obj.userData?.isButton) {
 
-          obj.userData.onClick();
-          return;
-        }
-                if (obj.userData?.isBillboardButton) {
-          const clicked = obj;
+        const mat = obj.userData.bgMaterial;
 
-          // すべて閉じる
-          billboardButtons.forEach(btn => {
-            btn.userData.popup.visible = false;
-            btn.userData.isOpen = false;
-          });
+        mat.color.multiplyScalar(0.7);
 
-          // すでに開いていたなら終了
-          if (!clicked.userData.isOpen) {
-            clicked.userData.popup.visible = true;
-            clicked.userData.isOpen = true;
-          }
+        setTimeout(() => {
+          mat.color.copy(obj.userData.defaultColor);
+        }, 120);
 
-          return;
-        }
-         obj = obj.parent;
+        obj.userData.onClick();
+        return;
       }
-   }
+
+      // =========================
+      // Billboardボタン
+      // =========================
+      if (obj.userData?.isBillboardButton) {
+
+        const clicked = obj;
+
+        // 全部閉じる
+        billboardButtons.forEach(btn => {
+          btn.userData.popup.visible = false;
+          btn.userData.isOpen = false;
+        });
+
+        // 開いてなければ開く
+        if (!clicked.userData.isOpen) {
+          clicked.userData.popup.visible = true;
+          clicked.userData.isOpen = true;
+        }
+
+        return;
+      }
+
+      obj = obj.parent;
+    }
+  }
 });
 
 function updateHover(rayOrigin, rayDirection) {
@@ -481,45 +497,60 @@ renderer.xr.addEventListener('sessionstart', () => {
     raycaster.ray.origin.setFromMatrixPosition(controller2.matrixWorld);
     raycaster.ray.direction.set(0, 0, -1).applyMatrix4(tempMatrix);
 
-    const intersects = raycaster.intersectObjects(uiGroup.children, true);
+  const targets = [
+    ...uiGroup.children,
+    ...billboardButtons
+  ];
+  const intersects = raycaster.intersectObjects(targets, true);
 
-   for (let i = 0; i < intersects.length; i++) {
-      let obj = intersects[i].object;
-      while (obj) {
-        if (obj.userData?.isButton) {
+  for (let i = 0; i < intersects.length; i++) {
 
-          const mat = obj.userData.bgMaterial;
+    let obj = intersects[i].object;
 
-          mat.color.multiplyScalar(0.7); // 暗く
+    while (obj) {
 
-          setTimeout(() => {
-            mat.color.copy(obj.userData.defaultColor);
-          }, 120);
+      // =========================
+      // HUDボタン
+      // =========================
+      if (obj.userData?.isButton) {
 
-          obj.userData.onClick();
-          return;
-        }
-        if (obj.userData?.isBillboardButton) {
-          const clicked = obj;
+        const mat = obj.userData.bgMaterial;
 
-          // すべて閉じる
-          billboardButtons.forEach(btn => {
-            btn.userData.popup.visible = false;
-            btn.userData.isOpen = false;
-          });
+        mat.color.multiplyScalar(0.7);
 
-          // すでに開いていたなら終了
-          if (!clicked.userData.isOpen) {
-            clicked.userData.popup.visible = true;
-            clicked.userData.isOpen = true;
-          }
+        setTimeout(() => {
+          mat.color.copy(obj.userData.defaultColor);
+        }, 120);
 
-          return;
-        }
-        obj = obj.parent;
+        obj.userData.onClick();
+        return;
       }
-   }
-  });
+
+      // =========================
+      // Billboardボタン
+      // =========================
+      if (obj.userData?.isBillboardButton) {
+
+        const clicked = obj;
+
+        // 全部閉じる
+        billboardButtons.forEach(btn => {
+          btn.userData.popup.visible = false;
+          btn.userData.isOpen = false;
+        });
+
+        // 開いてなければ開く
+        if (!clicked.userData.isOpen) {
+          clicked.userData.popup.visible = true;
+          clicked.userData.isOpen = true;
+        }
+
+        return;
+      }
+
+      obj = obj.parent;
+    }
+  }
 });
 
 
