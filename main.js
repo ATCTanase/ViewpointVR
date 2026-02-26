@@ -15,6 +15,8 @@ let tempMatrix = new THREE.Matrix4();
 let laser = null;
 let currentHover = null;
 
+const billboardButtons = [];
+
 /* ----------------------------------
    Renderer
 ---------------------------------- */
@@ -216,6 +218,23 @@ window.addEventListener("click", (event) => {
           obj.userData.onClick();
           return;
         }
+                if (obj.userData?.isBillboardButton) {
+          const clicked = obj;
+
+          // すべて閉じる
+          billboardButtons.forEach(btn => {
+            btn.userData.popup.visible = false;
+            btn.userData.isOpen = false;
+          });
+
+          // すでに開いていたなら終了
+          if (!clicked.userData.isOpen) {
+            clicked.userData.popup.visible = true;
+            clicked.userData.isOpen = true;
+          }
+
+          return;
+        }
          obj = obj.parent;
       }
    }
@@ -289,7 +308,7 @@ const mapGroup = new THREE.Group();
 camera.add(mapGroup);
 
 // 左上配置（視界の左上）
-mapGroup.position.set(-0.6, 0.35, -1.2);
+mapGroup.position.set(-0.3, 0.35, -1.2);
 
 const mapTexture = new THREE.TextureLoader().load("./Map/MAP.png");
 
@@ -309,6 +328,89 @@ mapMesh.renderOrder = 9992;
 // 初期は非表示
 mapGroup.visible = false;
 
+function createBillboardButton({ position, iconUrl, title, popupImageUrl }) {
+
+  const group = new THREE.Group();
+  group.position.copy(position);
+
+  // ===== 本体 =====
+  const bgMat = new THREE.MeshBasicMaterial({
+    color: 0x5aa0bd,
+    transparent: true
+  });
+
+  const bg = new THREE.Mesh(
+    new THREE.PlaneGeometry(0.4, 0.2),
+    bgMat
+  );
+
+  group.add(bg);
+
+  // アイコン
+  const iconTex = new THREE.TextureLoader().load(iconUrl);
+  const icon = new THREE.Mesh(
+    new THREE.PlaneGeometry(0.1, 0.1),
+    new THREE.MeshBasicMaterial({ map: iconTex, transparent: true })
+  );
+  icon.position.set(-0.12, 0.02, 0.01);
+  group.add(icon);
+
+  // タイトル
+  const canvas = document.createElement("canvas");
+  canvas.width = 512;
+  canvas.height = 256;
+  const ctx = canvas.getContext("2d");
+
+  ctx.fillStyle = "white";
+  ctx.font = "bold 80px sans-serif";
+  ctx.textAlign = "left";
+  ctx.fillText(title, 40, 140);
+
+  const textTex = new THREE.CanvasTexture(canvas);
+
+  const text = new THREE.Mesh(
+    new THREE.PlaneGeometry(0.25, 0.12),
+    new THREE.MeshBasicMaterial({ map: textTex, transparent: true })
+  );
+  text.position.set(0.05, -0.02, 0.01);
+  group.add(text);
+
+  // ===== ポップアップ =====
+  const popupTex = new THREE.TextureLoader().load(popupImageUrl);
+
+  const popup = new THREE.Mesh(
+    new THREE.PlaneGeometry(0.9, 0.55),
+    new THREE.MeshBasicMaterial({ map: popupTex, transparent: true })
+  );
+
+  popup.position.set(0, 0.55, 0);
+  popup.visible = false;
+
+  group.add(popup);
+
+  // ===== データ =====
+  group.userData.isBillboardButton = true;
+  group.userData.popup = popup;
+  group.userData.isOpen = false;
+
+  billboardButtons.push(group);
+
+  return group;
+}
+
+world.add(createBillboardButton({
+  position: new THREE.Vector3(0, 1.5, -3),
+  iconUrl: "./icon/Info.png",
+  title: "360度画像",
+  popupImageUrl: "./Image/360_Image.png"
+}));
+
+world.add(createBillboardButton({
+  position: new THREE.Vector3(2, 1.5, -4),
+  iconUrl: "./icon/Info.png",
+  title: "設備情報",
+  popupImageUrl: "./Image/Facility_Info.png"
+}));
 
 /* ----------------------------------
    PC Controls (OrbitControls)
@@ -395,6 +497,23 @@ renderer.xr.addEventListener('sessionstart', () => {
           }, 120);
 
           obj.userData.onClick();
+          return;
+        }
+        if (obj.userData?.isBillboardButton) {
+          const clicked = obj;
+
+          // すべて閉じる
+          billboardButtons.forEach(btn => {
+            btn.userData.popup.visible = false;
+            btn.userData.isOpen = false;
+          });
+
+          // すでに開いていたなら終了
+          if (!clicked.userData.isOpen) {
+            clicked.userData.popup.visible = true;
+            clicked.userData.isOpen = true;
+          }
+
           return;
         }
         obj = obj.parent;
@@ -523,6 +642,15 @@ updateHover(
   raycaster.ray.origin,
   raycaster.ray.direction
 );
+
+billboardButtons.forEach(btn => {
+
+  const camPos = camera.position.clone();
+  camPos.y = btn.position.y; // Y固定
+
+  btn.lookAt(camPos);
+});
+
 
   if (controls.enabled) {
     controls.update(); // PC操作時のみ
