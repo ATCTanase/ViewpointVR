@@ -16,7 +16,6 @@ let laser = null;
 let currentHover = null;
 
 const billboardButtons = [];
-const isPC = !("ontouchstart" in window) && navigator.maxTouchPoints === 0;
 
 /* ----------------------------------
    Renderer
@@ -481,8 +480,7 @@ const keys = {
   right: false
 };
 
-if (isPC) {
-  window.addEventListener("keydown", (e) => {
+window.addEventListener("keydown", (e) => {
     switch (e.code) {
       case "KeyW": keys.forward = true; break;
       case "KeyS": keys.backward = true; break;
@@ -499,10 +497,9 @@ if (isPC) {
       case "KeyD": keys.right = false; break;
     }
   });
-}
 
 function updateMovement(delta) {
-  if (!isPC) return;
+  
   velocity.set(0, 0, 0);
 
   if (keys.forward) velocity.z -= 1;
