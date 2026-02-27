@@ -65,6 +65,7 @@ camera.add(uiGroup);
 const cameraGroup = new THREE.Group();
 scene.add(cameraGroup);
 cameraGroup.add(camera);
+cameraGroup.position.set(0, 0, 3); 
 
 const rotationSpeed = 2.0; 
 
@@ -581,8 +582,8 @@ function updateMovement(delta) {
 renderer.xr.addEventListener('sessionstart', () => {
 
   controls.enabled = false;
-  world.position.set(0, 0, -3);
 
+  cameraGroup.position.set(0, 0, 3); 
     // 表示用（見える）
   controllerGrip1 = renderer.xr.getControllerGrip(0);
   controllerGrip1.add(
@@ -801,6 +802,10 @@ renderer.setAnimationLoop(() => {
     raycaster.ray.origin,
     raycaster.ray.direction
   );
+
+  
+  cameraGroup.updateMatrixWorld(true);
+  camera.updateMatrixWorld(true);
 
   billboardButtons.forEach(btn => {
     const camPos = new THREE.Vector3();
