@@ -22,7 +22,6 @@ const billboardButtons = [];
 
 let yaw = 0;
 let pitch = 0;
-let isSplatLoaded = false; // Splat読み込みフラグ
 
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
@@ -318,7 +317,6 @@ splat.position.set(8, 0, -130);
 world.add(splat);
 
 splat.onLoad = () => {
-  isSplatLoaded = true;
   console.log("Splat loaded");
 };
 
@@ -379,16 +377,6 @@ renderer.setAnimationLoop(() => {
 
   updateMovement(delta);
   if (controls.enabled) controls.update();
-
-  // 3. Splat更新 (修正点)
-  if (isSplatLoaded && splat.update) {
-    // VR中ならXRカメラ、そうでなければ通常のカメラ
-    const activeCamera = renderer.xr.isPresenting ? renderer.xr.getCamera() : camera;
-    
-    // 行列を強制更新してから渡す（decomposeエラー対策）
-    activeCamera.updateMatrixWorld(true);
-    splat.update(activeCamera, renderer);
-  }
 
   renderer.render(scene, camera);
 });
