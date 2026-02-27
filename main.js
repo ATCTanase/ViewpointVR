@@ -45,7 +45,7 @@ const camera = new THREE.PerspectiveCamera(
   0.01,
   1000
 );
-camera.position.set(0, 1.6, 0);
+camera.position.set(0, 1.6, 3);
 
 
 /* ----------------------------------
@@ -62,12 +62,7 @@ const menuData = [
 const uiGroup = new THREE.Group();
 uiGroup.position.set(0, -0.25, -1.5);
 camera.add(uiGroup);
-const cameraGroup = new THREE.Group();
-scene.add(cameraGroup);
-cameraGroup.add(camera);
-cameraGroup.position.set(0, 0, 3); 
-
-const rotationSpeed = 2.0; 
+scene.add(camera);
 
 const menu = new THREE.Group();
 uiGroup.add(menu);
@@ -582,8 +577,8 @@ function updateMovement(delta) {
 renderer.xr.addEventListener('sessionstart', () => {
 
   controls.enabled = false;
+  world.position.set(0, 0, -3);
 
-  cameraGroup.position.set(0, 0, 3); 
     // 表示用（見える）
   controllerGrip1 = renderer.xr.getControllerGrip(0);
   controllerGrip1.add(
@@ -596,10 +591,11 @@ renderer.xr.addEventListener('sessionstart', () => {
   
   controllerGrip1.renderOrder = 10000;
   controllerGrip2.renderOrder = 10000;
-  cameraGroup.add(controllerGrip1, controllerGrip2);
+  scene.add(controllerGrip1,controllerGrip2);
+
   controller1 = renderer.xr.getController(0);
   controller2 = renderer.xr.getController(1);
-  cameraGroup.add(controller1, controller2);
+  scene.add(controller1, controller2);
 
   // レーザー作成
   const geometry = new THREE.BufferGeometry().setFromPoints([
@@ -714,7 +710,7 @@ const splat = new SplatMesh({
 
 // ★ 最重要：位置とスケール
 splat.rotation.set(-Math.PI / 2, -Math.PI / 2, 0, "YXZ");
-splat.position.set(0, 0, 0);
+splat.position.set(8, 0, -130);
 //splat.scale.setScalar(0.02);
 world.add(splat);
 console.log(splat);
@@ -751,36 +747,44 @@ renderer.setAnimationLoop(() => {
     if (session) {
       session.inputSources.forEach((source) => {
         if (source.handedness === 'right' && source.gamepad) {
+
           const axes = source.gamepad.axes;
-          const x = axes[2] ?? 0; // スティック左右
-          const y = axes[3] ?? 0; // スティック前後
+
+          const x = axes[2] ?? 0;  // 右スティック左右
+          const y = axes[3] ?? 0;  // 右スティック前後
 
           if (Math.abs(x) > 0.1 || Math.abs(y) > 0.1) {
-            // カメラが向いている方向を取得
+
             const forward = new THREE.Vector3();
             camera.getWorldDirection(forward);
-            forward.y = 0; // 地面を這うように移動
+
+            forward.y = 0;
             forward.normalize();
 
             const right = new THREE.Vector3();
-            right.crossVectors(camera.up, forward).normalize();
+            right.crossVectors(camera.up, forward).normalize(); 
 
-            // cameraGroup 自体を移動させる
-            // yはスティック上方向がマイナスのため、引き算で前に進む
-            cameraGroup.position.addScaledVector(forward, -y * moveSpeed * delta);
-            cameraGroup.position.addScaledVector(right, x * moveSpeed * delta);
-          }
-        }        
-        if (source.handedness === 'left' && source.gamepad) {
-          const axes = source.gamepad.axes;
-          const x = axes[2] ?? 0; // スティック左右
-
-          if (Math.abs(x) > 0.1) {
-            // 世界ではなく、カメラを包んでいるグループを回転させる
-            cameraGroup.rotation.y -= x * rotationSpeed * delta;
+            // ---- 符号修正 ----
+            world.position.addScaledVector(forward, y * moveSpeed * delta);
+            world.position.addScaledVector(right, x * moveSpeed * delta);
           }
         }
-    })
+        if (source.handedness === "left") {
+          const lx = axes[0] ?? 0;
+          const ly = axes[1] ?? 0;
+
+          if (Math.abs(lx) < stickDeadZone) lx = 0;
+          if (Math.abs(ly) < stickDeadZone) ly = 0;
+        
+          // 回転
+          yaw   -= lx * stickSensitivity * delta;
+          pitch -= ly * stickSensitivity * delta;
+          // 🔥 cameraRig を回転させる
+          cameraRig.rotation.y = yaw;
+          cameraRig.rotation.x = yaw;
+        }
+      });
+    }
     if (controller2 && laser) {
 
       tempMatrix.identity().extractRotation(controller2.matrixWorld);
@@ -796,21 +800,18 @@ renderer.setAnimationLoop(() => {
         laser.scale.z = 5;
       }
     }
-    }
   }
+
   updateHover(
     raycaster.ray.origin,
     raycaster.ray.direction
   );
 
-  
-  cameraGroup.updateMatrixWorld(true);
-  camera.updateMatrixWorld(true);
-
   billboardButtons.forEach(btn => {
-    const camPos = new THREE.Vector3();
-    camera.getWorldPosition(camPos); // cameraGroupの回転も考慮された座標が取れる
-    camPos.y = btn.position.y;
+
+    const camPos = camera.position.clone();
+    camPos.y = btn.position.y; // Y固定
+
     btn.lookAt(camPos);
   });
 
