@@ -723,9 +723,6 @@ splat.onLoad = () => {
    console.log(splat.material);
    console.log(splat.material.uniforms);
 };
-splat.ready.then(() => {
-  console.log("ready.then");
-})
 splat.addEventListener("load", () => {
   console.log("addEventListener");
 });
