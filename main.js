@@ -696,8 +696,8 @@ scene.add(new THREE.AmbientLight(0xffffff, 1.0));
 /* ----------------------------------
    Debug helpers（必要なら有効化）
 ---------------------------------- */
- world.add(new THREE.AxesHelper(1));
- world.add(new THREE.GridHelper(10, 10));
+//  world.add(new THREE.AxesHelper(1));
+//  world.add(new THREE.GridHelper(10, 10));
 
 /* ----------------------------------
    Gaussian Splat (spark)
