@@ -703,7 +703,7 @@ scene.add(new THREE.AmbientLight(0xffffff, 1.0));
    Gaussian Splat (spark)
 ---------------------------------- */
 const splat = new SplatMesh({
-  url: './point_cloud_alpha_voxel_200k.ply',   // ← 自分の PLY
+  url: './point_cloud_alpha_voxel_200k.ply',
   pointSize: 0.04,
   alphaTest: 0.003
 });
@@ -711,7 +711,7 @@ const splat = new SplatMesh({
 // ★ 最重要：位置とスケール
 splat.rotation.set(-Math.PI / 2, -Math.PI / 2, 0, "YXZ");
 splat.position.set(8, 0, -130);
-//splat.scale.setScalar(0.02);
+splat.frustumCulled = false
 world.add(splat);
 console.log(splat);
 console.log(splat.uniforms);
