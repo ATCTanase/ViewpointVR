@@ -531,7 +531,7 @@ const velocity = new THREE.Vector3();
 function updateMovement(delta) {
   if (renderer.xr.isPresenting) return;
 
-  controls.enabled = false;
+  // controls.enabled = false;
   velocity.set(0, 0, 0);
 
   if (keys.forward) velocity.z += 1;
