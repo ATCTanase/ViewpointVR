@@ -618,11 +618,11 @@ renderer.xr.addEventListener('sessionstart', () => {
     raycaster.ray.origin.setFromMatrixPosition(controller2.matrixWorld);
     raycaster.ray.direction.set(0, 0, -1).applyMatrix4(tempMatrix);
 
-  const targets = [
-    ...uiGroup.children,
-    ...billboardButtons
-  ];
-  const intersects = raycaster.intersectObjects(targets, true);
+    const targets = [
+      ...uiGroup.children,
+      ...billboardButtons
+    ];
+    const intersects = raycaster.intersectObjects(targets, true);
 
     for (let i = 0; i < intersects.length; i++) {
 
@@ -745,7 +745,6 @@ renderer.setAnimationLoop(() => {
     const session = renderer.xr.getSession();
 
     if (session) {
-
       session.inputSources.forEach((source) => {
         if (source.handedness === 'right' && source.gamepad) {
 
@@ -770,38 +769,51 @@ renderer.setAnimationLoop(() => {
             world.position.addScaledVector(right, x * moveSpeed * delta);
           }
         }
+        if (source.handedness === "left") {
+          const lx = axes[0] ?? 0;
+          const ly = axes[1] ?? 0;
 
+          if (Math.abs(lx) < stickDeadZone) lx = 0;
+          if (Math.abs(ly) < stickDeadZone) ly = 0;
+        
+          // 回転
+          yaw   -= lx * stickSensitivity * delta;
+          pitch -= ly * stickSensitivity * delta;
+          // 🔥 cameraRig を回転させる
+          cameraRig.rotation.y = yaw;
+          cameraRig.rotation.x = yaw;
+        }
       });
     }
+    if (controller2 && laser) {
+
+      tempMatrix.identity().extractRotation(controller2.matrixWorld);
+
+      raycaster.ray.origin.setFromMatrixPosition(controller2.matrixWorld);
+      raycaster.ray.direction.set(0, 0, -1).applyMatrix4(tempMatrix);
+
+      const intersects = raycaster.intersectObjects(uiGroup.children, true);
+
+      if (intersects.length > 0) {
+        laser.scale.z = intersects[0].distance;
+      } else {
+        laser.scale.z = 5;
+      }
+    }
   }
-if (renderer.xr.isPresenting && controller2 && laser) {
 
-  tempMatrix.identity().extractRotation(controller2.matrixWorld);
+  updateHover(
+    raycaster.ray.origin,
+    raycaster.ray.direction
+  );
 
-  raycaster.ray.origin.setFromMatrixPosition(controller2.matrixWorld);
-  raycaster.ray.direction.set(0, 0, -1).applyMatrix4(tempMatrix);
+  billboardButtons.forEach(btn => {
 
-  const intersects = raycaster.intersectObjects(uiGroup.children, true);
+    const camPos = camera.position.clone();
+    camPos.y = btn.position.y; // Y固定
 
-  if (intersects.length > 0) {
-    laser.scale.z = intersects[0].distance;
-  } else {
-    laser.scale.z = 5;
-  }
-}
-
-updateHover(
-  raycaster.ray.origin,
-  raycaster.ray.direction
-);
-
-billboardButtons.forEach(btn => {
-
-  const camPos = camera.position.clone();
-  camPos.y = btn.position.y; // Y固定
-
-  btn.lookAt(camPos);
-});
+    btn.lookAt(camPos);
+  });
 
   updateCameraRotation();
   updateMovement(delta);
