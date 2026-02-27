@@ -795,8 +795,8 @@ renderer.setAnimationLoop(() => {
         laser.scale.z = 5;
       }
     }
+    }
   }
-
   updateHover(
     raycaster.ray.origin,
     raycaster.ray.direction
