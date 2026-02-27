@@ -22,7 +22,7 @@ const billboardButtons = [];
 
 let yaw = 0;
 let pitch = 0;
-let isDragging = false;
+let isSplatLoaded = false; // Splat読み込みフラグ
 
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
@@ -44,7 +44,6 @@ document.body.appendChild(VRButton.createButton(renderer));
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x000000);
 
-// VR移動のためにカメラをグループ（Rig）に入れる
 const cameraRig = new THREE.Group();
 scene.add(cameraRig);
 
@@ -70,7 +69,7 @@ const menuData = [
 
 const uiGroup = new THREE.Group();
 uiGroup.position.set(0, -0.25, -1.5);
-camera.add(uiGroup); // HUDとしてカメラに追従
+camera.add(uiGroup);
 
 const BUTTON_W = 0.18;
 const spacing = 0.21;
@@ -85,8 +84,7 @@ function createMenuBar(width, height) {
 }
 
 const totalWidth = (menuData.length - 1) * spacing + BUTTON_W + 0.15;
-const menuBar = createMenuBar(totalWidth, 0.3);
-uiGroup.add(menuBar);
+uiGroup.add(createMenuBar(totalWidth, 0.3));
 
 function createButton(data) {
   const group = new THREE.Group();
@@ -141,7 +139,7 @@ menuData.forEach((data, i) => {
 });
 
 /* ----------------------------------
-   Interactions
+   Interactions & Hover
 ---------------------------------- */
 function checkIntersects() {
   const targets = [...uiGroup.children, ...billboardButtons];
@@ -157,11 +155,10 @@ function checkIntersects() {
         return true;
       }
       if (obj.userData?.isBillboardButton) {
-        billboardButtons.forEach(btn => {
-          if (btn !== obj) { btn.userData.popup.visible = false; btn.userData.isOpen = false; }
-        });
-        obj.userData.isOpen = !obj.userData.isOpen;
-        obj.userData.popup.visible = obj.userData.isOpen;
+        const targetState = !obj.userData.isOpen;
+        billboardButtons.forEach(btn => { btn.userData.popup.visible = false; btn.userData.isOpen = false; });
+        obj.userData.isOpen = targetState;
+        obj.userData.popup.visible = targetState;
         return true;
       }
       obj = obj.parent;
@@ -197,7 +194,6 @@ function updateHover(rayOrigin, rayDirection) {
 ---------------------------------- */
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
-controls.enabled = true;
 
 window.addEventListener("click", (e) => {
   if (renderer.xr.isPresenting) return;
@@ -208,18 +204,8 @@ window.addEventListener("click", (e) => {
 });
 
 const keys = { forward: false, backward: false, left: false, right: false };
-window.addEventListener("keydown", (e) => {
-  if (e.code === "KeyW") keys.forward = true;
-  if (e.code === "KeyS") keys.backward = true;
-  if (e.code === "KeyA") keys.left = true;
-  if (e.code === "KeyD") keys.right = true;
-});
-window.addEventListener("keyup", (e) => {
-  if (e.code === "KeyW") keys.forward = false;
-  if (e.code === "KeyS") keys.backward = false;
-  if (e.code === "KeyA") keys.left = false;
-  if (e.code === "KeyD") keys.right = false;
-});
+window.addEventListener("keydown", (e) => { if (keys.hasOwnProperty(e.code.replace('Key','').toLowerCase())) keys[e.code.replace('Key','').toLowerCase()] = true; });
+window.addEventListener("keyup", (e) => { if (keys.hasOwnProperty(e.code.replace('Key','').toLowerCase())) keys[e.code.replace('Key','').toLowerCase()] = false; });
 
 function updateMovement(delta) {
   if (renderer.xr.isPresenting) return;
@@ -228,7 +214,6 @@ function updateMovement(delta) {
   if (keys.backward) moveVec.z += 1;
   if (keys.left) moveVec.x -= 1;
   if (keys.right) moveVec.x += 1;
-
   if (moveVec.lengthSq() > 0) {
     moveVec.normalize();
     const yawEuler = new THREE.Euler(0, camera.rotation.y, 0, 'YXZ');
@@ -242,7 +227,6 @@ function updateMovement(delta) {
 ---------------------------------- */
 renderer.xr.addEventListener('sessionstart', () => {
   controls.enabled = false;
-  
   controller1 = renderer.xr.getController(0);
   controller2 = renderer.xr.getController(1);
   cameraRig.add(controller1, controller2);
@@ -253,8 +237,10 @@ renderer.xr.addEventListener('sessionstart', () => {
   controllerGrip2.add(controllerModelFactory.createControllerModel(controllerGrip2));
   cameraRig.add(controllerGrip1, controllerGrip2);
 
-  const laserGeo = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0,0,0), new THREE.Vector3(0,0,-1)]);
-  laser = new THREE.Line(laserGeo, new THREE.LineBasicMaterial({ color: 0x00ffcc }));
+  laser = new THREE.Line(
+    new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0,0,0), new THREE.Vector3(0,0,-1)]),
+    new THREE.LineBasicMaterial({ color: 0x00ffcc })
+  );
   laser.scale.z = 5;
   controller2.add(laser);
 
@@ -267,7 +253,7 @@ renderer.xr.addEventListener('sessionstart', () => {
 });
 
 /* ----------------------------------
-   Map & Billboard Functions
+   Map & Billboard
 ---------------------------------- */
 const mapGroup = new THREE.Group();
 camera.add(mapGroup);
@@ -288,13 +274,9 @@ function exitApp() { console.log("終了"); }
 function createBillboardButton({ position, iconUrl, title, popupImageUrl }) {
   const group = new THREE.Group();
   group.position.copy(position);
-  const bg = new THREE.Mesh(new THREE.PlaneGeometry(0.35, 0.35), new THREE.MeshBasicMaterial({ color: 0x5aa0bd, transparent: true }));
-  group.add(bg);
+  group.add(new THREE.Mesh(new THREE.PlaneGeometry(0.35, 0.35), new THREE.MeshBasicMaterial({ color: 0x5aa0bd, transparent: true })));
 
-  const icon = new THREE.Mesh(
-    new THREE.PlaneGeometry(0.16, 0.16),
-    new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load(iconUrl), transparent: true, alphaTest: 0.01 })
-  );
+  const icon = new THREE.Mesh(new THREE.PlaneGeometry(0.16, 0.16), new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load(iconUrl), transparent: true, alphaTest: 0.01 }));
   icon.position.set(0, 0.07, 0.01);
   group.add(icon);
 
@@ -302,10 +284,7 @@ function createBillboardButton({ position, iconUrl, title, popupImageUrl }) {
   canvas.width = 512; canvas.height = 256;
   const ctx = canvas.getContext("2d");
   ctx.fillStyle = "white"; ctx.font = "bold 100px sans-serif"; ctx.fillText(title, 40, 140);
-  const text = new THREE.Mesh(
-    new THREE.PlaneGeometry(0.28, 0.10),
-    new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(canvas), transparent: true, alphaTest: 0.01 })
-  );
+  const text = new THREE.Mesh(new THREE.PlaneGeometry(0.28, 0.10), new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(canvas), transparent: true, alphaTest: 0.01 }));
   text.position.set(0, -0.10, 0.01);
   group.add(text);
 
@@ -313,8 +292,7 @@ function createBillboardButton({ position, iconUrl, title, popupImageUrl }) {
   popup.position.set(0, 0.6, 0);
   popup.visible = false;
   new THREE.TextureLoader().load(popupImageUrl, (tex) => {
-    const aspect = tex.image.width / tex.image.height;
-    popup.geometry = new THREE.PlaneGeometry(0.6 * aspect, 0.6);
+    popup.geometry = new THREE.PlaneGeometry(0.6 * (tex.image.width / tex.image.height), 0.6);
     popup.material = new THREE.MeshBasicMaterial({ map: tex, transparent: true });
   });
   group.add(popup);
@@ -339,6 +317,11 @@ splat.rotation.set(-Math.PI / 2, -Math.PI / 2, 0, "YXZ");
 splat.position.set(8, 0, -130);
 world.add(splat);
 
+splat.onLoad = () => {
+  isSplatLoaded = true;
+  console.log("Splat loaded");
+};
+
 /* ----------------------------------
    Main Loop
 ---------------------------------- */
@@ -348,17 +331,15 @@ const clock = new THREE.Clock();
 renderer.setAnimationLoop(() => {
   const delta = clock.getDelta();
 
+  // 1. XR入力処理
   if (renderer.xr.isPresenting) {
     const session = renderer.xr.getSession();
     if (session) {
       session.inputSources.forEach((source) => {
         if (!source.gamepad) return;
         const axes = source.gamepad.axes;
-
         if (source.handedness === 'right') {
-          // 右スティックで移動 (前後左右)
-          const rx = axes[2] || 0;
-          const ry = axes[3] || 0;
+          const rx = axes[2] || 0; const ry = axes[3] || 0;
           if (Math.abs(rx) > stickDeadZone || Math.abs(ry) > stickDeadZone) {
             const forward = new THREE.Vector3(0, 0, -1).applyQuaternion(camera.quaternion);
             forward.y = 0; forward.normalize();
@@ -368,11 +349,8 @@ renderer.setAnimationLoop(() => {
           }
         }
         if (source.handedness === 'left') {
-          // 左スティックで回転 (左右のみ)
-          const lx = axes[2] || 0; 
-          if (Math.abs(lx) > stickDeadZone) {
-            cameraRig.rotation.y -= lx * stickSensitivity * delta;
-          }
+          const lx = axes[2] || 0;
+          if (Math.abs(lx) > stickDeadZone) cameraRig.rotation.y -= lx * stickSensitivity * delta;
         }
       });
     }
@@ -386,13 +364,12 @@ renderer.setAnimationLoop(() => {
       laser.scale.z = intersects.length > 0 ? intersects[0].distance : 5;
     }
   } else {
-    // PCホバー更新
-    mouse.x = (mouse.x || 0); mouse.y = (mouse.y || 0);
+    // PCホバー
     raycaster.setFromCamera(mouse, camera);
     updateHover(raycaster.ray.origin, raycaster.ray.direction);
   }
 
-  // ビルボードをカメラに向ける
+  // 2. ビルボード更新
   billboardButtons.forEach(btn => {
     const target = new THREE.Vector3();
     camera.getWorldPosition(target);
@@ -402,9 +379,16 @@ renderer.setAnimationLoop(() => {
 
   updateMovement(delta);
   if (controls.enabled) controls.update();
-  
-  // Splatの更新 (ソート等が必要な場合)
-  if (splat.update) splat.update(camera, renderer);
+
+  // 3. Splat更新 (修正点)
+  if (isSplatLoaded && splat.update) {
+    // VR中ならXRカメラ、そうでなければ通常のカメラ
+    const activeCamera = renderer.xr.isPresenting ? renderer.xr.getCamera() : camera;
+    
+    // 行列を強制更新してから渡す（decomposeエラー対策）
+    activeCamera.updateMatrixWorld(true);
+    splat.update(activeCamera, renderer);
+  }
 
   renderer.render(scene, camera);
 });
