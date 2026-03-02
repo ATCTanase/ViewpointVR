@@ -782,14 +782,13 @@ renderer.setAnimationLoop(() => {
         if (!source.gamepad) return;
 
         const gp = source.gamepad;
-        console.log("axes:", gp.axes);
         // ======================
         // 右手：回転
         // ======================
         if (source.handedness === "right") {
 
           const axes = gp.axes;
-          let lx = axes[0] ?? 0;
+          let lx = axes[2] ?? 0;
 
           const deadZone = 0.1;
           if (Math.abs(lx) < deadZone) lx = 0;
@@ -806,8 +805,8 @@ renderer.setAnimationLoop(() => {
         if (source.handedness === "left") {
 
           const axes = gp.axes;
-          let x = axes[0] ?? 0;
-          let y = axes[1] ?? 0;
+          let x = axes[2] ?? 0;
+          let y = axes[3] ?? 0;
 
           const deadZone = 0.1;
           if (Math.abs(x) < deadZone) x = 0;
@@ -826,14 +825,9 @@ renderer.setAnimationLoop(() => {
             cameraGroup.position.addScaledVector(forward, -y * speed * delta);
             cameraGroup.position.addScaledVector(right,  x * speed * delta);
           }
-          gp.buttons.forEach((b, i) => {
-            if (b.pressed) {
-              console.log("pressed index:", i);
-            }
-          });
           // 上下
-          const buttonX = gp.buttons[3];
-          const buttonY = gp.buttons[4];
+          const buttonX = gp.buttons[4];
+          const buttonY = gp.buttons[5];
 
           if (buttonY?.pressed) {
             cameraGroup.position.y += 2.0 * speed * delta;
