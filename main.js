@@ -806,7 +806,7 @@ renderer.setAnimationLoop(() => {
           const stickDeadZone = 0.15;
           const stickSensitivity = 2.0;
           
-          if (Math.abs(lx) < deadZone) lx = 0;
+          if (Math.abs(lx) < stickDeadZone) lx = 0;
 
           if (lx !== 0) {
             yaw -= lx * stickSensitivity * delta;
