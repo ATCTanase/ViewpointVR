@@ -799,8 +799,8 @@ renderer.setAnimationLoop(() => {
             // ==========================
             // 🔼 上昇 / 🔽 下降
             // ==========================
-            const buttonX = gp.buttons[3]; // X
-            const buttonY = gp.buttons[4]; // Y
+            const buttonX = source.gamepad.buttons[3]; // X
+            const buttonY = source.gamepad.buttons[4]; // Y
 
             if (buttonY?.pressed) {
               world.position.y += 2.0 * speedMultiplier * delta;
