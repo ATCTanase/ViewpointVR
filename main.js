@@ -741,6 +741,7 @@ const splat = new SplatMesh({
 // ★ 最重要：位置とスケール
 splat.rotation.set(Math.PI,Math.PI / 2, 0, "YXZ");
 splat.position.set(8, 0, -130);
+splat.renderOrder = 0;
 world.add(splat);
 console.log(splat);
 console.log(splat.uniforms);
