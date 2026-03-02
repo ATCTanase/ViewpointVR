@@ -817,9 +817,6 @@ renderer.setAnimationLoop(() => {
           let lx = axes[0] ?? 0;
           let ly = axes[1] ?? 0;
 
-          if (Math.abs(lx) < stickDeadZone) lx = 0;
-          if (Math.abs(ly) < stickDeadZone) ly = 0;
-
           yaw   -= lx * stickSensitivity * delta;
           pitch -= ly * stickSensitivity * delta;
 
