@@ -618,7 +618,9 @@ renderer.xr.addEventListener('sessionstart', () => {
 
   // 関数化して確実に適用
   const forceTop = (root) => {
+    Debug.log("forceTop");
     root.traverse(obj => {
+      Debug.log("traverse");
       if (obj.isMesh || obj.isLine) {
         obj.renderOrder = 2000; // UIより圧倒的に高い数値
         obj.material.depthTest = false;
