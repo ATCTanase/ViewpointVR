@@ -782,7 +782,7 @@ renderer.setAnimationLoop(() => {
         if (!source.gamepad) return;
 
         const gp = source.gamepad;
-
+        console.log("axes:", gp.axes);
         // ======================
         // 右手：回転
         // ======================
@@ -826,7 +826,11 @@ renderer.setAnimationLoop(() => {
             cameraGroup.position.addScaledVector(forward, -y * speed * delta);
             cameraGroup.position.addScaledVector(right,  x * speed * delta);
           }
-
+          gp.buttons.forEach((b, i) => {
+            if (b.pressed) {
+              console.log("pressed index:", i);
+            }
+          });
           // 上下
           const buttonX = gp.buttons[3];
           const buttonY = gp.buttons[4];
