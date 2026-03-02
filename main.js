@@ -96,7 +96,7 @@ const totalWidth =
   (menuData.length - 1) * spacing + BUTTON_W + 0.15; // 余白ちょい足し
 
 const menuBar = createMenuBar(totalWidth, 0.3);
-menuBar.renderOrder = 9990;
+menuBar.renderOrder = 1000;
 uiGroup.add(menuBar);
 function createButton(data) {
 
@@ -127,7 +127,7 @@ function createButton(data) {
     bgMaterial
   );
   
-  bg.renderOrder = 9991;
+  bg.renderOrder = 1001;
   group.add(bg);
 
   hitArea.userData.bgMaterial = bgMaterial;
@@ -147,7 +147,7 @@ function createButton(data) {
   );
 
   icon.position.set(0, 0.04, 0.001);
-  icon.renderOrder = 9992;
+  icon.renderOrder = 1002;
   group.add(icon);
 
   // テキストCanvas
@@ -180,7 +180,7 @@ function createButton(data) {
   );
 
   text.position.set(0, -0.05, 0.002);
-  text.renderOrder = 9992;
+  text.renderOrder = 1002;
   group.add(text);
 
   return group;
@@ -345,7 +345,7 @@ const mapMesh = new THREE.Mesh(
 
 mapGroup.add(mapMesh);
 
-mapMesh.renderOrder = 9992;
+mapMesh.renderOrder = 1002;
 // 初期は非表示
 mapGroup.visible = false;
 
@@ -358,7 +358,9 @@ function createBillboardButton({ position, iconUrl, title, popupImageUrl }) {
 
   const bgMat = new THREE.MeshBasicMaterial({
     color: 0x5aa0bd,
-    transparent: true
+    transparent: true,
+    renderOrder: 100,
+    depthTest: false, 
   });
 
   const bg = new THREE.Mesh(
@@ -376,6 +378,8 @@ function createBillboardButton({ position, iconUrl, title, popupImageUrl }) {
     new THREE.MeshBasicMaterial({
       map: iconTex,
       transparent: true,
+      renderOrder: 101,
+      depthTest: false, 
       alphaTest: 0.01
     })
   );
@@ -400,6 +404,8 @@ group.add(icon);
     new THREE.MeshBasicMaterial({
       map: textTex,
       transparent: true,
+      renderOrder: 102,
+      depthTest: false,
       alphaTest: 0.01
     })
   );
@@ -427,6 +433,8 @@ group.add(icon);
     popup.material = new THREE.MeshBasicMaterial({
       map: texture,
       transparent: true
+      renderOrder: 100,
+      depthTest: false,
     });
 
   });
@@ -612,7 +620,7 @@ renderer.xr.addEventListener('sessionstart', () => {
   const forceTop = (root) => {
     root.traverse(obj => {
       if (obj.isMesh || obj.isLine) {
-        obj.renderOrder = 10000; // UIより圧倒的に高い数値
+        obj.renderOrder = 2000; // UIより圧倒的に高い数値
         obj.material.depthTest = false;
         obj.material.depthWrite = false;
         obj.material.transparent = true;
@@ -637,10 +645,12 @@ renderer.xr.addEventListener('sessionstart', () => {
   const material = new THREE.LineBasicMaterial({ 
     color: 0x00ffcc,
     depthTest: false, // UIより前に出す
-    depthWrite: false
+    depthWrite: false,
+    transparent: true,
+    renderOrder: 2001
   });
   laser = new THREE.Line(geometry, material);
-  laser.renderOrder = 10001; // 最前面
+  laser.renderOrder = 2001; // 最前面
   laser.scale.z = 5;
 
   controller2.add(laser);
