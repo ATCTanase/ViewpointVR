@@ -760,8 +760,21 @@ renderer.setAnimationLoop(() => {
     const session = renderer.xr.getSession();
 
     if (session) {
+      
+      let speedMultiplier = 1.0;
+      session.inputSources.forEach((s) => {
+        if (s.handedness === "right") {
+          const rightGrip = s.gamepad.buttons[1]; // squeeze
+          if (rightGrip?.pressed) {
+            speedMultiplier = 3.0;
+          }
+        }
+      });
+      
       session.inputSources.forEach((source) => {
-        if (source.handedness === 'right' && source.gamepad) {
+        if (!source.gamepad) return;
+
+        if (source.handedness === 'left') {
 
           const axes = source.gamepad.axes;
 
@@ -780,23 +793,41 @@ renderer.setAnimationLoop(() => {
             right.crossVectors(camera.up, forward).normalize(); 
 
             // ---- 符号修正 ----
-            world.position.addScaledVector(forward, y * moveSpeed * delta);
-            world.position.addScaledVector(right, x * moveSpeed * delta);
+            world.position.addScaledVector(forward, y * moveSpeed * delta*speedMultiplier);
+            world.position.addScaledVector(right, x * moveSpeed * delta*speedMultiplier);
           }
+            // ==========================
+            // 🔼 上昇 / 🔽 下降
+            // ==========================
+            const buttonX = gp.buttons[3]; // X
+            const buttonY = gp.buttons[4]; // Y
+
+            if (buttonY?.pressed) {
+              world.position.y += 2.0 * speedMultiplier * delta;
+            }
+
+            if (buttonX?.pressed) {
+              world.position.y -= 2.0 * speedMultiplier * delta;
+            }
         }
-        if (source.handedness === "left") {
-          const lx = axes[0] ?? 0;
-          const ly = axes[1] ?? 0;
+
+        if (source.handedness === "right") {
+
+          let lx = axes[0] ?? 0;
+          let ly = axes[1] ?? 0;
 
           if (Math.abs(lx) < stickDeadZone) lx = 0;
           if (Math.abs(ly) < stickDeadZone) ly = 0;
-        
-          // 回転
+
           yaw   -= lx * stickSensitivity * delta;
           pitch -= ly * stickSensitivity * delta;
-          // 🔥 cameraRig を回転させる
+
+          // ピッチ制限（酔い防止）
+          const maxPitch = Math.PI / 2 - 0.05;
+          pitch = Math.max(-maxPitch, Math.min(maxPitch, pitch));
+
           cameraRig.rotation.y = yaw;
-          cameraRig.rotation.x = yaw;
+          cameraRig.rotation.x = pitch;
         }
       });
     }
