@@ -751,6 +751,8 @@ window.addEventListener('resize', () => {
    Render loop
 ---------------------------------- */
 const clock = new THREE.Clock();
+const stickSensitivity = 1;
+const stickDeadZone =0.3;
 
 renderer.setAnimationLoop(() => {
   const delta = clock.getDelta();
@@ -816,6 +818,9 @@ renderer.setAnimationLoop(() => {
           const axes = source.gamepad.axes;
           let lx = axes[0] ?? 0;
           let ly = axes[1] ?? 0;
+
+          if (Math.abs(lx) < stickDeadZone) lx = 0;
+          if (Math.abs(ly) < stickDeadZone) ly = 0;
 
           yaw   -= lx * stickSensitivity * delta;
           pitch -= ly * stickSensitivity * delta;
