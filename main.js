@@ -601,29 +601,36 @@ renderer.xr.addEventListener('sessionstart', () => {
   cameraGroup.position.set(0, 0, 3); 
     // 表示用（見える）
   controllerGrip1 = renderer.xr.getControllerGrip(0);
-  controllerGrip1.add(
-    controllerModelFactory.createControllerModel(controllerGrip1)
-  ); 
-  controllerGrip2 = renderer.xr.getControllerGrip(1);
-  controllerGrip2.add(
-    controllerModelFactory.createControllerModel(controllerGrip2)
-  );
-  
-  controllerGrip1.traverse(obj => {
-    if (obj.isMesh) {
-      obj.renderOrder = 10000;
-      obj.material.depthTest = false;
-      obj.material.depthWrite = false;
-    }
+  const model1 = controllerModelFactory.createControllerModel(controllerGrip1);
+
+  controllerGrip1.add(model1);
+
+  model1.addEventListener("model-loaded", () => {
+    model1.traverse(obj => {
+      if (obj.isMesh) {
+        obj.renderOrder = 10000;
+        obj.material.depthTest = false;
+        obj.material.depthWrite = false;
+        obj.material.transparent = true;
+      }
+    });
   });
 
-  controllerGrip2.traverse(obj => {
-    if (obj.isMesh) {
-      obj.renderOrder = 10000;
-      obj.material.depthTest = false;
-      obj.material.depthWrite = false;
-    }
+  controllerGrip2 = renderer.xr.getControllerGrip(1);
+  const model2 = controllerModelFactory.createControllerModel(controllerGrip2);
+
+  controllerGrip2.add(model1);
+  model2.addEventListener("model-loaded", () => {
+    model2.traverse(obj => {
+      if (obj.isMesh) {
+        obj.renderOrder = 10000;
+        obj.material.depthTest = false;
+        obj.material.depthWrite = false;
+        obj.material.transparent = true;
+      }
+    });
   });
+  
   cameraGroup.add(controllerGrip1, controllerGrip2);
   controller1 = renderer.xr.getController(0);
   controller2 = renderer.xr.getController(1);
@@ -803,8 +810,8 @@ renderer.setAnimationLoop(() => {
           const axes = gp.axes;
           let lx = axes[2] ?? 0;
 
-          const stickDeadZone = 0.15;
-          const stickSensitivity = 2.0;
+          const stickDeadZone = 0.5;
+          const stickSensitivity = 1.5;
           
           if (Math.abs(lx) < stickDeadZone) lx = 0;
 
