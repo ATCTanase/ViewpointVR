@@ -728,9 +728,8 @@ const splat = new SplatMesh({
 });
 
 // ★ 最重要：位置とスケール
-splat.rotation.set(-Math.PI / 2, -Math.PI / 2, 0, "YXZ");
-splat.position.set(0, 0, 0);
-//splat.scale.setScalar(0.02);
+splat.rotation.set(Math.PI,Math.PI / 2, 0, "YXZ");
+splat.position.set(8, 0, -130);
 world.add(splat);
 console.log(splat);
 console.log(splat.uniforms);
@@ -842,6 +841,7 @@ renderer.setAnimationLoop(() => {
           }
         }
       });
+      
       if (controller2 && laser) {
 
         tempMatrix.identity().extractRotation(controller2.matrixWorld);
