@@ -74,24 +74,6 @@ uiGroup.add(menu);
 const BUTTON_W = 0.18;
 const spacing = 0.21;
 
-function createMenuBar(width, height) {
-  const geometry = new THREE.PlaneGeometry(width, height);
-
-  const material = new THREE.MeshBasicMaterial({
-      color: 0x2f5f75,
-      transparent: true,
-      opacity: 0.85,
-      depthTest: false,
-      depthWrite: false
-  });
-
-  const bar = new THREE.Mesh(
-    new THREE.PlaneGeometry(width, height),
-    material
-  );
-  return bar;
-}
-
 function createRoundedRectShape(width, height, radius) {
   const shape = new THREE.Shape();
   const x = -width / 2;
@@ -109,6 +91,27 @@ function createRoundedRectShape(width, height, radius) {
 
   return shape;
 }
+function createMenuBar(width, height) {
+  const radius = 0.05
+  const shape = createRoundedRectShape(width, height, radius);
+  const geometry = new THREE.ShapeGeometry(shape, 12);
+  
+
+  const material = new THREE.MeshBasicMaterial({
+      color: 0x2f5f75,
+      transparent: true,
+      opacity: 0.85,
+      depthTest: false,
+      depthWrite: false
+  });
+
+  const bar = new THREE.Mesh(
+    new THREE.PlaneGeometry(width, height),
+    material
+  );
+  return bar;
+}
+
 const totalWidth =
   (menuData.length - 1) * spacing + BUTTON_W + 0.15; // 余白ちょい足し
 
@@ -136,7 +139,7 @@ function createButton(data) {
     depthWrite: false
   });
   const bg = new THREE.Mesh(bgGeometry, bgMaterial);
-  bg.renderOrder = 20001; // HUDの優先度
+  bg.renderOrder = 1001; // HUDの優先度
   group.add(bg);
 
   //当たり判定（透明）
