@@ -127,16 +127,7 @@ function createButton(data) {
   // PlaneGeometry の代わりに ShapeGeometry を使用
   const bgGeometry = new THREE.ShapeGeometry(roundedRectShape);
 
-  // 当たり判定（透明なメッシュ）
-  const hitArea = new THREE.Mesh(
-    bgGeometry, // 当たり判定も同じ形状にする
-    new THREE.MeshBasicMaterial({ visible: false })
-  );
-  hitArea.userData.onClick = data.action;
-  hitArea.userData.isButton = true;
-  group.add(hitArea);
-
-  // 1. 背景（見た目）
+  //背景（見た目）
   const bgMaterial = new THREE.MeshBasicMaterial({
     color: 0x5aa0bd,
     transparent: true,
@@ -148,20 +139,19 @@ function createButton(data) {
   bg.renderOrder = 20001; // HUDの優先度
   group.add(bg);
 
-  // 2. 当たり判定（透明）
+  //当たり判定（透明）
   const hitArea = new THREE.Mesh(
     geometry,
     new THREE.MeshBasicMaterial({ visible: false, transparent: true })
   );
   
-  // 重要：ホバーに必要なデータをここに集約する
   hitArea.userData = {
     isButton: true,
     onClick: data.action,
-    bgMaterial: bgMaterial, // 背景の色を変えるために参照を持たせる
+    bgMaterial: bgMaterial,
     defaultColor: new THREE.Color(0x5aa0bd)
   };
-  
+
   // アイコン
   const texture = new THREE.TextureLoader().load(data.icon);
 
