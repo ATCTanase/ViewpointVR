@@ -359,8 +359,6 @@ function createBillboardButton({ position, iconUrl, title, popupImageUrl }) {
   const bgMat = new THREE.MeshBasicMaterial({
     color: 0x5aa0bd,
     transparent: true,
-    renderOrder: 100,
-    depthTest: false, 
   });
 
   const bg = new THREE.Mesh(
@@ -378,14 +376,12 @@ function createBillboardButton({ position, iconUrl, title, popupImageUrl }) {
     new THREE.MeshBasicMaterial({
       map: iconTex,
       transparent: true,
-      renderOrder: 101,
-      depthTest: false, 
       alphaTest: 0.01
     })
   );
 
-icon.position.set(0, 0.07, 0.01);
-group.add(icon);
+  icon.position.set(0, 0.07, 0.01);
+  group.add(icon);
 
   // タイトル
   const canvas = document.createElement("canvas");
@@ -404,8 +400,6 @@ group.add(icon);
     new THREE.MeshBasicMaterial({
       map: textTex,
       transparent: true,
-      renderOrder: 102,
-      depthTest: false,
       alphaTest: 0.01
     })
   );
@@ -741,7 +735,6 @@ const splat = new SplatMesh({
 // ★ 最重要：位置とスケール
 splat.rotation.set(Math.PI,Math.PI / 2, 0, "YXZ");
 splat.position.set(8, 0, -130);
-splat.renderOrder = 0;
 world.add(splat);
 console.log(splat);
 console.log(splat.uniforms);
