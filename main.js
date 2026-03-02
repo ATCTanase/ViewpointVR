@@ -506,7 +506,10 @@ const keys = {
   forward: false,
   backward: false,
   left: false,
-  right: false
+  right: false,
+  up: false,
+  down: false,
+  sprint: false
 };
 
 window.addEventListener("keydown", (e) => {
@@ -515,6 +518,10 @@ window.addEventListener("keydown", (e) => {
       case "KeyS": keys.backward = true; break;
       case "KeyA": keys.left = true; break;
       case "KeyD": keys.right = true; break;
+      case "KeyE": keys.up = true; break;
+      case "KeyQ": keys.down = true; break;
+      case "ShiftLeft":
+      case "ShiftRight": keys.sprint = true; break;
     }
   });
 
@@ -524,6 +531,10 @@ window.addEventListener("keydown", (e) => {
       case "KeyS": keys.backward = false; break;
       case "KeyA": keys.left = false; break;
       case "KeyD": keys.right = false; break;
+      case "KeyE": keys.up = false; break;
+      case "KeyQ": keys.down = false; break;
+      case "ShiftLeft":
+      case "ShiftRight": keys.sprint = false; break;
     }
   });
 
@@ -538,6 +549,8 @@ function updateMovement(delta) {
   if (keys.backward) velocity.z -= 1;
   if (keys.left) velocity.x -= 1;
   if (keys.right) velocity.x += 1;
+  if (keys.up) velocity.y += 1;
+  if (keys.down) velocity.y -= 1;
 
   if (velocity.lengthSq() === 0) return;
 
@@ -564,8 +577,10 @@ function updateMovement(delta) {
   const move = new THREE.Vector3();
   move.addScaledVector(forward, velocity.z);
   move.addScaledVector(right, velocity.x);
+  move.y += velocity.y;
+  const speedMultiplier = keys.sprint ? 3.0 : 1.0;
 
-  move.multiplyScalar(moveSpeed * delta);
+  move.multiplyScalar(moveSpeed * delta *speedMultiplier);
 
   camera.position.add(move);
 }
