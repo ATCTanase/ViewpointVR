@@ -813,6 +813,7 @@ renderer.setAnimationLoop(() => {
 
         if (source.handedness === "right") {
 
+          const axes = source.gamepad.axes;
           let lx = axes[0] ?? 0;
           let ly = axes[1] ?? 0;
 
