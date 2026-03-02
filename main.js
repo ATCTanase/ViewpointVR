@@ -45,7 +45,7 @@ const camera = new THREE.PerspectiveCamera(
   0.01,
   1000
 );
-camera.position.set(0, 1.6, 3);
+camera.position.set(0, 1.6, 0);
 
 
 /* ----------------------------------
@@ -531,7 +531,7 @@ const velocity = new THREE.Vector3();
 function updateMovement(delta) {
   if (renderer.xr.isPresenting) return;
 
-  // controls.enabled = false;
+  controls.enabled = false;
   velocity.set(0, 0, 0);
 
   if (keys.forward) velocity.z += 1;
@@ -618,11 +618,11 @@ renderer.xr.addEventListener('sessionstart', () => {
     raycaster.ray.origin.setFromMatrixPosition(controller2.matrixWorld);
     raycaster.ray.direction.set(0, 0, -1).applyMatrix4(tempMatrix);
 
-  const targets = [
-    ...uiGroup.children,
-    ...billboardButtons
-  ];
-  const intersects = raycaster.intersectObjects(targets, true);
+    const targets = [
+      ...uiGroup.children,
+      ...billboardButtons
+    ];
+    const intersects = raycaster.intersectObjects(targets, true);
 
     for (let i = 0; i < intersects.length; i++) {
 
@@ -696,25 +696,32 @@ scene.add(new THREE.AmbientLight(0xffffff, 1.0));
 /* ----------------------------------
    Debug helpers（必要なら有効化）
 ---------------------------------- */
- world.add(new THREE.AxesHelper(1));
- world.add(new THREE.GridHelper(10, 10));
+//  world.add(new THREE.AxesHelper(1));
+//  world.add(new THREE.GridHelper(10, 10));
 
 /* ----------------------------------
    Gaussian Splat (spark)
 ---------------------------------- */
 const splat = new SplatMesh({
-  url: './point_cloud_alpha_voxel_200k.ply',
+  url: './point_cloud_alpha_voxel_200k.ply',   // ← 自分の PLY
   pointSize: 0.04,
   alphaTest: 0.003
 });
 
 // ★ 最重要：位置とスケール
 splat.rotation.set(-Math.PI / 2, -Math.PI / 2, 0, "YXZ");
-// splat.position.set(8, 0, -130);
-splat.position.set(0, 1.5, -1.0);
-splat.scale.setScalar(0.02);
+splat.position.set(8, 0, -130);
+//splat.scale.setScalar(0.02);
 world.add(splat);
 console.log(splat);
+console.log(splat.uniforms);
+
+// ロード確認
+splat.onLoad = () => {
+  console.log("Gaussian Splat loaded");
+   console.log(splat.material);
+   console.log(splat.material.uniforms);
+};
 
 /* ----------------------------------
    Resize
@@ -738,7 +745,6 @@ renderer.setAnimationLoop(() => {
     const session = renderer.xr.getSession();
 
     if (session) {
-
       session.inputSources.forEach((source) => {
         if (source.handedness === 'right' && source.gamepad) {
 
@@ -763,38 +769,51 @@ renderer.setAnimationLoop(() => {
             world.position.addScaledVector(right, x * moveSpeed * delta);
           }
         }
+        if (source.handedness === "left") {
+          const lx = axes[0] ?? 0;
+          const ly = axes[1] ?? 0;
 
+          if (Math.abs(lx) < stickDeadZone) lx = 0;
+          if (Math.abs(ly) < stickDeadZone) ly = 0;
+        
+          // 回転
+          yaw   -= lx * stickSensitivity * delta;
+          pitch -= ly * stickSensitivity * delta;
+          // 🔥 cameraRig を回転させる
+          cameraRig.rotation.y = yaw;
+          cameraRig.rotation.x = yaw;
+        }
       });
     }
+    if (controller2 && laser) {
+
+      tempMatrix.identity().extractRotation(controller2.matrixWorld);
+
+      raycaster.ray.origin.setFromMatrixPosition(controller2.matrixWorld);
+      raycaster.ray.direction.set(0, 0, -1).applyMatrix4(tempMatrix);
+
+      const intersects = raycaster.intersectObjects(uiGroup.children, true);
+
+      if (intersects.length > 0) {
+        laser.scale.z = intersects[0].distance;
+      } else {
+        laser.scale.z = 5;
+      }
+    }
   }
-if (renderer.xr.isPresenting && controller2 && laser) {
 
-  tempMatrix.identity().extractRotation(controller2.matrixWorld);
+  updateHover(
+    raycaster.ray.origin,
+    raycaster.ray.direction
+  );
 
-  raycaster.ray.origin.setFromMatrixPosition(controller2.matrixWorld);
-  raycaster.ray.direction.set(0, 0, -1).applyMatrix4(tempMatrix);
+  billboardButtons.forEach(btn => {
 
-  const intersects = raycaster.intersectObjects(uiGroup.children, true);
+    const camPos = camera.position.clone();
+    camPos.y = btn.position.y; // Y固定
 
-  if (intersects.length > 0) {
-    laser.scale.z = intersects[0].distance;
-  } else {
-    laser.scale.z = 5;
-  }
-}
-
-updateHover(
-  raycaster.ray.origin,
-  raycaster.ray.direction
-);
-
-billboardButtons.forEach(btn => {
-
-  const camPos = camera.position.clone();
-  camPos.y = btn.position.y; // Y固定
-
-  btn.lookAt(camPos);
-});
+    btn.lookAt(camPos);
+  });
 
   updateCameraRotation();
   updateMovement(delta);
