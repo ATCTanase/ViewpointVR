@@ -609,8 +609,21 @@ renderer.xr.addEventListener('sessionstart', () => {
     controllerModelFactory.createControllerModel(controllerGrip2)
   );
   
-  controllerGrip1.renderOrder = 10000;
-  controllerGrip2.renderOrder = 10000;
+  controllerGrip1.traverse(obj => {
+    if (obj.isMesh) {
+      obj.renderOrder = 10000;
+      obj.material.depthTest = false;
+      obj.material.depthWrite = false;
+    }
+  });
+
+  controllerGrip2.traverse(obj => {
+    if (obj.isMesh) {
+      obj.renderOrder = 10000;
+      obj.material.depthTest = false;
+      obj.material.depthWrite = false;
+    }
+  });
   cameraGroup.add(controllerGrip1, controllerGrip2);
   controller1 = renderer.xr.getController(0);
   controller2 = renderer.xr.getController(1);
@@ -790,7 +803,9 @@ renderer.setAnimationLoop(() => {
           const axes = gp.axes;
           let lx = axes[2] ?? 0;
 
-          const deadZone = 0.1;
+          const stickDeadZone = 0.15;
+          const stickSensitivity = 2.0;
+          
           if (Math.abs(lx) < deadZone) lx = 0;
 
           if (lx !== 0) {
@@ -830,11 +845,11 @@ renderer.setAnimationLoop(() => {
           const buttonY = gp.buttons[5];
 
           if (buttonY?.pressed) {
-            cameraGroup.position.y += 2.0 * speed * delta;
+            cameraGroup.position.y += speed * delta;
           }
 
           if (buttonX?.pressed) {
-            cameraGroup.position.y -= 2.0 * speed * delta;
+            cameraGroup.position.y -= speed * delta;
           }
         }
       });
