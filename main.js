@@ -762,20 +762,33 @@ renderer.setAnimationLoop(() => {
 
     const session = renderer.xr.getSession();
     let baseMoveSpeed = 2.0;
-    let currentMoveSpeed = baseMoveSpeed;
 
     if (session) {
+      let isSprinting = false;
       session.inputSources.forEach((source) => {
         if (!source.gamepad) return;
+
+        if (source.handedness === "right") {
+          const grip = source.gamepad.buttons[1];
+          if (grip?.pressed) {
+            isSprinting = true;
+          }
+        }
+      });
+
+      const speed = isSprinting ? baseMoveSpeed * 3.0 : baseMoveSpeed;
+
+      session.inputSources.forEach((source) => {
+        if (!source.gamepad) return;
+
         const gp = source.gamepad;
 
-        // ==========================
-        // 🏃 右手：回転 + ダッシュ
-        // ==========================
+        // ======================
+        // 右手：回転
+        // ======================
         if (source.handedness === "right") {
 
           const axes = gp.axes;
-
           let lx = axes[0] ?? 0;
 
           const deadZone = 0.1;
@@ -785,21 +798,14 @@ renderer.setAnimationLoop(() => {
             yaw -= lx * stickSensitivity * delta;
             cameraGroup.rotation.y = yaw;
           }
-
-          // ダッシュ（右グリップ）
-          const grip = gp.buttons[1]; // squeeze
-          currentMoveSpeed = grip?.pressed
-            ? baseMoveSpeed * 3.0
-            : baseMoveSpeed;
         }
 
-        // ==========================
-        // 🕹 左手：移動 + 上下
-        // ==========================
+        // ======================
+        // 左手：移動
+        // ======================
         if (source.handedness === "left") {
 
           const axes = gp.axes;
-
           let x = axes[0] ?? 0;
           let y = axes[1] ?? 0;
 
@@ -817,31 +823,24 @@ renderer.setAnimationLoop(() => {
             const right = new THREE.Vector3();
             right.crossVectors(forward, camera.up).normalize();
 
-            cameraGroup.position.addScaledVector(
-              forward,
-              -y * currentMoveSpeed * delta   // ← 修正
-            );
-
-            cameraGroup.position.addScaledVector(
-              right,
-              x * currentMoveSpeed * delta    // ← 修正
-            );
+            cameraGroup.position.addScaledVector(forward, -y * speed * delta);
+            cameraGroup.position.addScaledVector(right,  x * speed * delta);
           }
 
-          // 上下移動
+          // 上下
           const buttonX = gp.buttons[3];
           const buttonY = gp.buttons[4];
 
           if (buttonY?.pressed) {
-            cameraGroup.position.y += 2.0 * currentMoveSpeed * delta;
+            cameraGroup.position.y += 2.0 * speed * delta;
           }
 
           if (buttonX?.pressed) {
-            cameraGroup.position.y -= 2.0 * currentMoveSpeed * delta;
+            cameraGroup.position.y -= 2.0 * speed * delta;
           }
         }
       });
-      
+
       if (controller2 && laser) {
 
         tempMatrix.identity().extractRotation(controller2.matrixWorld);
