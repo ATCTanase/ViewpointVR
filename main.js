@@ -106,7 +106,7 @@ function createMenuBar(width, height) {
   });
 
   const bar = new THREE.Mesh(
-    new THREE.PlaneGeometry(width, height),
+    geometry,
     material
   );
   return bar;
