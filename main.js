@@ -136,7 +136,7 @@ function createButton(data) {
   hitArea.userData.isButton = true;
   group.add(hitArea);
 
-  // 背景（見える部分）
+  // 1. 背景（見た目）
   const bgMaterial = new THREE.MeshBasicMaterial({
     color: 0x5aa0bd,
     transparent: true,
@@ -144,11 +144,24 @@ function createButton(data) {
     depthTest: false,
     depthWrite: false
   });
-
-  const bg = new THREE.Mesh(bgGeometry, bgMaterial);
-  bg.renderOrder = 1001;
+  const bg = new THREE.Mesh(geometry, bgMaterial);
+  bg.renderOrder = 20001; // HUDの優先度
   group.add(bg);
 
+  // 2. 当たり判定（透明）
+  const hitArea = new THREE.Mesh(
+    geometry,
+    new THREE.MeshBasicMaterial({ visible: false, transparent: true })
+  );
+  
+  // 重要：ホバーに必要なデータをここに集約する
+  hitArea.userData = {
+    isButton: true,
+    onClick: data.action,
+    bgMaterial: bgMaterial, // 背景の色を変えるために参照を持たせる
+    defaultColor: new THREE.Color(0x5aa0bd)
+  };
+  
   // アイコン
   const texture = new THREE.TextureLoader().load(data.icon);
 
