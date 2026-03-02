@@ -148,9 +148,6 @@ const BUTTON_H = 0.18;
   bg.renderOrder = 1001;
   group.add(bg);
 
-  hitArea.userData.bgMaterial = bgMaterial;
-  hitArea.userData.defaultColor = new THREE.Color(0x5aa0bd);
-
   // アイコン
   const texture = new THREE.TextureLoader().load(data.icon);
 
