@@ -92,6 +92,23 @@ function createMenuBar(width, height) {
   return bar;
 }
 
+function createRoundedRectShape(width, height, radius) {
+  const shape = new THREE.Shape();
+  const x = -width / 2;
+  const y = -height / 2;
+
+  shape.moveTo(x, y + radius);
+  shape.lineTo(x, y + height - radius);
+  shape.quadraticCurveTo(x, y + height, x + radius, y + height);
+  shape.lineTo(x + width - radius, y + height);
+  shape.quadraticCurveTo(x + width, y + height, x + width, y + height - radius);
+  shape.lineTo(x + width, y + radius);
+  shape.quadraticCurveTo(x + width, y, x + width - radius, y);
+  shape.lineTo(x + radius, y);
+  shape.quadraticCurveTo(x, y, x, y + radius);
+
+  return shape;
+}
 const totalWidth =
   (menuData.length - 1) * spacing + BUTTON_W + 0.15; // 余白ちょい足し
 
@@ -100,20 +117,25 @@ menuBar.renderOrder = 1000;
 uiGroup.add(menuBar);
 function createButton(data) {
 
-  const group = new THREE.Group();
-  const BUTTON_H = 0.18;
+const BUTTON_H = 0.18;
+  const cornerRadius = 0.02; // 角丸の半径（お好みで調整）
+
+  // 角丸の形状データを作成
+  const roundedRectShape = createRoundedRectShape(BUTTON_W, BUTTON_H, cornerRadius);
   
+  // PlaneGeometry の代わりに ShapeGeometry を使用
+  const bgGeometry = new THREE.ShapeGeometry(roundedRectShape);
+
+  // 当たり判定（透明なメッシュ）
   const hitArea = new THREE.Mesh(
-    new THREE.PlaneGeometry(BUTTON_W, BUTTON_H),
+    bgGeometry, // 当たり判定も同じ形状にする
     new THREE.MeshBasicMaterial({ visible: false })
   );
-
   hitArea.userData.onClick = data.action;
   hitArea.userData.isButton = true;
-
   group.add(hitArea);
 
-  // 背景
+  // 背景（見える部分）
   const bgMaterial = new THREE.MeshBasicMaterial({
     color: 0x5aa0bd,
     transparent: true,
@@ -122,11 +144,7 @@ function createButton(data) {
     depthWrite: false
   });
 
-  const bg = new THREE.Mesh(
-    new THREE.PlaneGeometry(BUTTON_W, BUTTON_H),
-    bgMaterial
-  );
-  
+  const bg = new THREE.Mesh(bgGeometry, bgMaterial);
   bg.renderOrder = 1001;
   group.add(bg);
 
@@ -427,8 +445,6 @@ function createBillboardButton({ position, iconUrl, title, popupImageUrl }) {
     popup.material = new THREE.MeshBasicMaterial({
       map: texture,
       transparent: true,
-      renderOrder: 100,
-      depthTest: false,
     });
 
   });
