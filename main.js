@@ -117,7 +117,8 @@ menuBar.renderOrder = 1000;
 uiGroup.add(menuBar);
 function createButton(data) {
 
-const BUTTON_H = 0.18;
+  const group = new THREE.Group();
+  const BUTTON_H = 0.18;
   const cornerRadius = 0.02; // 角丸の半径（お好みで調整）
 
   // 角丸の形状データを作成
