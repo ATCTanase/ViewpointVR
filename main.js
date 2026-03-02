@@ -135,13 +135,13 @@ function createButton(data) {
     depthTest: false,
     depthWrite: false
   });
-  const bg = new THREE.Mesh(geometry, bgMaterial);
+  const bg = new THREE.Mesh(bgGeometry, bgMaterial);
   bg.renderOrder = 20001; // HUDの優先度
   group.add(bg);
 
   //当たり判定（透明）
   const hitArea = new THREE.Mesh(
-    geometry,
+    bgGeometry,
     new THREE.MeshBasicMaterial({ visible: false, transparent: true })
   );
   
