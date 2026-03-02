@@ -602,35 +602,27 @@ renderer.xr.addEventListener('sessionstart', () => {
     // 表示用（見える）
   controllerGrip1 = renderer.xr.getControllerGrip(0);
   const model1 = controllerModelFactory.createControllerModel(controllerGrip1);
-
   controllerGrip1.add(model1);
-
-  model1.addEventListener("model-loaded", () => {
-    model1.traverse(obj => {
-      if (obj.isMesh) {
-        obj.renderOrder = 10000;
-        obj.material.depthTest = false;
-        obj.material.depthWrite = false;
-        obj.material.transparent = true;
-      }
-    });
-  });
 
   controllerGrip2 = renderer.xr.getControllerGrip(1);
   const model2 = controllerModelFactory.createControllerModel(controllerGrip2);
+  controllerGrip2.add(model2);
 
-  controllerGrip2.add(model1);
-  model2.addEventListener("model-loaded", () => {
-    model2.traverse(obj => {
-      if (obj.isMesh) {
-        obj.renderOrder = 10000;
+  // 関数化して確実に適用
+  const forceTop = (root) => {
+    root.traverse(obj => {
+      if (obj.isMesh || obj.isLine) {
+        obj.renderOrder = 10000; // UIより圧倒的に高い数値
         obj.material.depthTest = false;
         obj.material.depthWrite = false;
         obj.material.transparent = true;
       }
     });
-  });
-  
+  };
+
+  model1.addEventListener("model-loaded", () => forceTop(model1));
+  model2.addEventListener("model-loaded", () => forceTop(model2));
+
   cameraGroup.add(controllerGrip1, controllerGrip2);
   controller1 = renderer.xr.getController(0);
   controller2 = renderer.xr.getController(1);
@@ -642,9 +634,13 @@ renderer.xr.addEventListener('sessionstart', () => {
     new THREE.Vector3(0, 0, -1)
   ]);
 
-  const material = new THREE.LineBasicMaterial({ color: 0x00ffcc });
-
+  const material = new THREE.LineBasicMaterial({ 
+    color: 0x00ffcc,
+    depthTest: false, // UIより前に出す
+    depthWrite: false
+  });
   laser = new THREE.Line(geometry, material);
+  laser.renderOrder = 10001; // 最前面
   laser.scale.z = 5;
 
   controller2.add(laser);
