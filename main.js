@@ -432,7 +432,7 @@ group.add(icon);
     popup.geometry = new THREE.PlaneGeometry(width, height);
     popup.material = new THREE.MeshBasicMaterial({
       map: texture,
-      transparent: true
+      transparent: true,
       renderOrder: 100,
       depthTest: false,
     });
