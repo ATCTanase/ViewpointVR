@@ -62,7 +62,12 @@ const menuData = [
 const uiGroup = new THREE.Group();
 uiGroup.position.set(0, -0.25, -1.5);
 camera.add(uiGroup);
-scene.add(camera);
+const cameraGroup = new THREE.Group();
+scene.add(cameraGroup);
+cameraGroup.add(camera);
+cameraGroup.position.set(0, 0, 3); 
+
+const rotationSpeed = 2.0; 
 
 const menu = new THREE.Group();
 uiGroup.add(menu);
@@ -530,7 +535,7 @@ window.addEventListener("keydown", (e) => {
       case "KeyW": keys.forward = false; break;
       case "KeyS": keys.backward = false; break;
       case "KeyA": keys.left = false; break;
-      case "KeyD": keys.right = false; break;
+      case "KeyD": keys.right = false; break;    
       case "KeyE": keys.up = false; break;
       case "KeyQ": keys.down = false; break;
       case "ShiftLeft":
@@ -578,9 +583,9 @@ function updateMovement(delta) {
   move.addScaledVector(forward, velocity.z);
   move.addScaledVector(right, velocity.x);
   move.y += velocity.y;
-  const speedMultiplier = keys.sprint ? 3.0 : 1.0;
 
-  move.multiplyScalar(moveSpeed * delta *speedMultiplier);
+  const speedMultiplier = keys.sprint ? 3.0 : 1.0;
+  move.multiplyScalar(moveSpeed * speedMultiplier * delta);
 
   camera.position.add(move);
 }
@@ -592,8 +597,8 @@ function updateMovement(delta) {
 renderer.xr.addEventListener('sessionstart', () => {
 
   controls.enabled = false;
-  world.position.set(0, 0, -3);
 
+  cameraGroup.position.set(0, 0, 3); 
     // 表示用（見える）
   controllerGrip1 = renderer.xr.getControllerGrip(0);
   controllerGrip1.add(
@@ -606,11 +611,10 @@ renderer.xr.addEventListener('sessionstart', () => {
   
   controllerGrip1.renderOrder = 10000;
   controllerGrip2.renderOrder = 10000;
-  scene.add(controllerGrip1,controllerGrip2);
-
+  cameraGroup.add(controllerGrip1, controllerGrip2);
   controller1 = renderer.xr.getController(0);
   controller2 = renderer.xr.getController(1);
-  scene.add(controller1, controller2);
+  cameraGroup.add(controller1, controller2);
 
   // レーザー作成
   const geometry = new THREE.BufferGeometry().setFromPoints([
@@ -724,8 +728,8 @@ const splat = new SplatMesh({
 });
 
 // ★ 最重要：位置とスケール
-splat.rotation.set(Math.PI,Math.PI / 2, 0, "YXZ");
-splat.position.set(8, 0, -130);
+splat.rotation.set(-Math.PI / 2, -Math.PI / 2, 0, "YXZ");
+splat.position.set(0, 0, 0);
 //splat.scale.setScalar(0.02);
 world.add(splat);
 console.log(splat);
@@ -751,8 +755,6 @@ window.addEventListener('resize', () => {
    Render loop
 ---------------------------------- */
 const clock = new THREE.Clock();
-const stickSensitivity = 1;
-const stickDeadZone =0.3;
 
 renderer.setAnimationLoop(() => {
   const delta = clock.getDelta();
@@ -760,107 +762,116 @@ renderer.setAnimationLoop(() => {
   if (renderer.xr.isPresenting) {
 
     const session = renderer.xr.getSession();
+    let baseMoveSpeed = 2.0;
+    let currentMoveSpeed = baseMoveSpeed;
 
     if (session) {
-      
-      let speedMultiplier = 1.0;
-      session.inputSources.forEach((s) => {
-        if (s.handedness === "right") {
-          const rightGrip = s.gamepad.buttons[1]; // squeeze
-          if (rightGrip?.pressed) {
-            speedMultiplier = 3.0;
-          }
-        }
-      });
-      
       session.inputSources.forEach((source) => {
         if (!source.gamepad) return;
+        const gp = source.gamepad;
 
-        if (source.handedness === 'left') {
+        // ==========================
+        // 🏃 右手：回転 + ダッシュ
+        // ==========================
+        if (source.handedness === "right") {
 
-          const axes = source.gamepad.axes;
+          const axes = gp.axes;
 
-          const x = axes[2] ?? 0;  // 右スティック左右
-          const y = axes[3] ?? 0;  // 右スティック前後
+          let lx = axes[0] ?? 0;
 
-          if (Math.abs(x) > 0.1 || Math.abs(y) > 0.1) {
+          const deadZone = 0.1;
+          if (Math.abs(lx) < deadZone) lx = 0;
+
+          if (lx !== 0) {
+            yaw -= lx * stickSensitivity * delta;
+            cameraGroup.rotation.y = yaw;
+          }
+
+          // ダッシュ（右グリップ）
+          const grip = gp.buttons[1]; // squeeze
+          currentMoveSpeed = grip?.pressed
+            ? baseMoveSpeed * 3.0
+            : baseMoveSpeed;
+        }
+
+        // ==========================
+        // 🕹 左手：移動 + 上下
+        // ==========================
+        if (source.handedness === "left") {
+
+          const axes = gp.axes;
+
+          let x = axes[0] ?? 0;
+          let y = axes[1] ?? 0;
+
+          const deadZone = 0.1;
+          if (Math.abs(x) < deadZone) x = 0;
+          if (Math.abs(y) < deadZone) y = 0;
+
+          if (x !== 0 || y !== 0) {
 
             const forward = new THREE.Vector3();
             camera.getWorldDirection(forward);
-
             forward.y = 0;
             forward.normalize();
 
             const right = new THREE.Vector3();
-            right.crossVectors(camera.up, forward).normalize(); 
+            right.crossVectors(forward, camera.up).normalize();
 
-            // ---- 符号修正 ----
-            world.position.addScaledVector(forward, y * moveSpeed * delta*speedMultiplier);
-            world.position.addScaledVector(right, x * moveSpeed * delta*speedMultiplier);
+            cameraGroup.position.addScaledVector(
+              forward,
+              -y * currentMoveSpeed * delta   // ← 修正
+            );
+
+            cameraGroup.position.addScaledVector(
+              right,
+              x * currentMoveSpeed * delta    // ← 修正
+            );
           }
-            // ==========================
-            // 🔼 上昇 / 🔽 下降
-            // ==========================
-            const buttonX = source.gamepad.buttons[3]; // X
-            const buttonY = source.gamepad.buttons[4]; // Y
 
-            if (buttonY?.pressed) {
-              world.position.y += 2.0 * speedMultiplier * delta;
-            }
+          // 上下移動
+          const buttonX = gp.buttons[3];
+          const buttonY = gp.buttons[4];
 
-            if (buttonX?.pressed) {
-              world.position.y -= 2.0 * speedMultiplier * delta;
-            }
-        }
+          if (buttonY?.pressed) {
+            cameraGroup.position.y += 2.0 * currentMoveSpeed * delta;
+          }
 
-        if (source.handedness === "right") {
-
-          const axes = source.gamepad.axes;
-          let lx = axes[0] ?? 0;
-          let ly = axes[1] ?? 0;
-
-          if (Math.abs(lx) < stickDeadZone) lx = 0;
-          if (Math.abs(ly) < stickDeadZone) ly = 0;
-
-          yaw   -= lx * stickSensitivity * delta;
-          pitch -= ly * stickSensitivity * delta;
-
-          // ピッチ制限（酔い防止）
-          const maxPitch = Math.PI / 2 - 0.05;
-          pitch = Math.max(-maxPitch, Math.min(maxPitch, pitch));
-
-          cameraRig.rotation.y = yaw;
-          cameraRig.rotation.x = pitch;
+          if (buttonX?.pressed) {
+            cameraGroup.position.y -= 2.0 * currentMoveSpeed * delta;
+          }
         }
       });
-    }
-    if (controller2 && laser) {
+      if (controller2 && laser) {
 
-      tempMatrix.identity().extractRotation(controller2.matrixWorld);
+        tempMatrix.identity().extractRotation(controller2.matrixWorld);
 
-      raycaster.ray.origin.setFromMatrixPosition(controller2.matrixWorld);
-      raycaster.ray.direction.set(0, 0, -1).applyMatrix4(tempMatrix);
+        raycaster.ray.origin.setFromMatrixPosition(controller2.matrixWorld);
+        raycaster.ray.direction.set(0, 0, -1).applyMatrix4(tempMatrix);
 
-      const intersects = raycaster.intersectObjects(uiGroup.children, true);
+        const intersects = raycaster.intersectObjects(uiGroup.children, true);
 
-      if (intersects.length > 0) {
-        laser.scale.z = intersects[0].distance;
-      } else {
-        laser.scale.z = 5;
+        if (intersects.length > 0) {
+          laser.scale.z = intersects[0].distance;
+        } else {
+          laser.scale.z = 5;
+        }
       }
     }
   }
-
   updateHover(
     raycaster.ray.origin,
     raycaster.ray.direction
   );
 
+  
+  cameraGroup.updateMatrixWorld(true);
+  camera.updateMatrixWorld(true);
+
   billboardButtons.forEach(btn => {
-
-    const camPos = camera.position.clone();
-    camPos.y = btn.position.y; // Y固定
-
+    const camPos = new THREE.Vector3();
+    camera.getWorldPosition(camPos); // cameraGroupの回転も考慮された座標が取れる
+    camPos.y = btn.position.y;
     btn.lookAt(camPos);
   });
 
