@@ -616,23 +616,6 @@ renderer.xr.addEventListener('sessionstart', () => {
   const model2 = controllerModelFactory.createControllerModel(controllerGrip2);
   controllerGrip2.add(model2);
 
-  // 関数化して確実に適用
-  const forceTop = (root) => {
-    Debug.log("forceTop");
-    root.traverse(obj => {
-      Debug.log("traverse");
-      if (obj.isMesh || obj.isLine) {
-        obj.renderOrder = 2000; // UIより圧倒的に高い数値
-        obj.material.depthTest = false;
-        obj.material.depthWrite = false;
-        obj.material.transparent = true;
-      }
-    });
-  };
-
-  model1.addEventListener("model-loaded", () => forceTop(model1));
-  model2.addEventListener("model-loaded", () => forceTop(model2));
-
   cameraGroup.add(controllerGrip1, controllerGrip2);
   controller1 = renderer.xr.getController(0);
   controller2 = renderer.xr.getController(1);
@@ -781,10 +764,36 @@ window.addEventListener('resize', () => {
 /* ----------------------------------
    Render loop
 ---------------------------------- */
+function applyTopOrder(object, orderValue) {
+  if (!object) return;
+
+  object.traverse(obj => {
+    // すでにこのオーダーが適用済みならスキップ
+    if (obj.userData.appliedOrder === orderValue) return;
+
+    if (obj.isMesh || obj.isLine) {
+      obj.renderOrder = orderValue;
+      if (obj.material) {
+        obj.material.depthTest = false;
+        obj.material.depthWrite = false;
+        obj.material.transparent = true;
+      }
+      // 適用済みフラグを立てる
+      obj.userData.appliedOrder = orderValue;
+      console.log("Controller settings applied to:", obj.name || "unnamed mesh");
+    }
+  });
+}
+
+
 const clock = new THREE.Clock();
 
 renderer.setAnimationLoop(() => {
   const delta = clock.getDelta();
+  if (renderer.xr.isPresenting) {
+    if (controllerGrip1) applyTopOrder(controllerGrip1, 2000);
+    if (controllerGrip2) applyTopOrder(controllerGrip2, 2000);
+  }
 
   if (renderer.xr.isPresenting) {
 
