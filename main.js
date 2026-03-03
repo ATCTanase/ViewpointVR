@@ -762,13 +762,17 @@ splat.rotation.set(Math.PI,Math.PI / 2, 0, "YXZ");
 splat.position.set(8, 0, -130);
 splat.renderOrder = 200;
 world.add(splat);
-console.log(splat.material);
-if (splat.material) {
-  splat.material.depthWrite = false;
-  splat.material.depthTest = true;
-  splat.material.needsUpdate = true;
-}
-
+splat.traverse((obj) => {
+  console.log(obj.traverse);
+  obj.renderOrder = 200;
+  console.log(obj.isMesh);
+  console.log(obj.material);
+  if (obj.isMesh && obj.material) {
+    obj.material.depthTest = true;
+    obj.material.depthWrite = false;
+    obj.material.needsUpdate = true;
+  }
+})
 console.log(splat);
 // ロード確認
 splat.onLoad = () => {
