@@ -300,11 +300,11 @@ function updateHover(rayOrigin, rayDirection) {
 
     // 親を遡ってボタンを探す
     while (obj) {
+      Debug.log(obj);
       if (obj.userData?.isButton) {
         foundButton = obj;
         break;
       }
-      obj = obj.parent;
     }
 
     if (foundButton) {
@@ -389,7 +389,12 @@ function createBillboardButton({ position, iconUrl, title, popupImageUrl }) {
 
   const bgMat = new THREE.MeshBasicMaterial({
     color: 0x5aa0bd,
-    transparent: true,
+    transparent: true,    
+      depthTest: true,  
+      depthWrite: true, 
+      polygonOffset: true,
+      polygonOffsetFactor: -1,
+      polygonOffsetUnits: -4
   });
 
   const bg = new THREE.Mesh(
@@ -407,7 +412,9 @@ function createBillboardButton({ position, iconUrl, title, popupImageUrl }) {
     new THREE.MeshBasicMaterial({
       map: iconTex,
       transparent: true,
-      alphaTest: 0.01
+      alphaTest: 0.01,
+      depthTest: true,
+      depthWrite: false
     })
   );
 
@@ -431,6 +438,7 @@ function createBillboardButton({ position, iconUrl, title, popupImageUrl }) {
     new THREE.MeshBasicMaterial({
       map: textTex,
       transparent: true,
+      depthTest: true, 
       alphaTest: 0.01
     })
   );
@@ -652,13 +660,13 @@ renderer.xr.addEventListener('sessionstart', () => {
 
   const material = new THREE.LineBasicMaterial({ 
     color: 0x00ffcc,
-    depthTest: false, // UIより前に出す
+    depthTest: false,
     depthWrite: false,
     transparent: true,
     renderOrder: 2001
   });
   laser = new THREE.Line(geometry, material);
-  laser.renderOrder = 2001; // 最前面
+  laser.renderOrder = 2001;
   laser.scale.z = 5;
 
   controller2.add(laser);
@@ -730,7 +738,6 @@ renderer.xr.addEventListener('sessionstart', () => {
 
 
 renderer.xr.addEventListener('sessionend', () => {
-  // VR終了時：マウス操作を復帰
   controls.enabled = true;
   controls.update();
 
@@ -761,9 +768,10 @@ const splat = new SplatMesh({
   alphaTest: 0.003
 });
 
-// ★ 最重要：位置とスケール
+//位置とスケール
 splat.rotation.set(Math.PI,Math.PI / 2, 0, "YXZ");
 splat.position.set(8, 0, -130);
+splat.renderOrder = 0;
 world.add(splat);
 console.log(splat);
 console.log(splat.uniforms);
@@ -929,7 +937,7 @@ renderer.setAnimationLoop(() => {
 
   billboardButtons.forEach(btn => {
     const camPos = new THREE.Vector3();
-    camera.getWorldPosition(camPos); // cameraGroupの回転も考慮された座標が取れる
+    camera.getWorldPosition(camPos);
     camPos.y = btn.position.y;
     btn.lookAt(camPos);
   });
@@ -938,7 +946,7 @@ renderer.setAnimationLoop(() => {
   updateMovement(delta);
 
   if (controls.enabled) {
-    controls.update(); // PC操作時のみ
+    controls.update();
   }
   renderer.render(scene, camera);
 });
