@@ -377,7 +377,7 @@ function createBillboardButton({ position, iconUrl, title, popupImageUrl }) {
 
   const bgMat = new THREE.MeshBasicMaterial({
     color: 0x5aa0bd,
-    transparent: true, 
+    transparent: false, 
     alphaTest: 0.01,
     depthWrite: true,
     depthTest: true,
@@ -397,7 +397,7 @@ function createBillboardButton({ position, iconUrl, title, popupImageUrl }) {
     new THREE.PlaneGeometry(iconSize, iconSize),
     new THREE.MeshBasicMaterial({
       map: iconTex,
-      transparent: true,
+      transparent: false,
       alphaTest: 0.01,
       depthWrite: true,
       depthTest: true
@@ -423,7 +423,7 @@ function createBillboardButton({ position, iconUrl, title, popupImageUrl }) {
     new THREE.PlaneGeometry(0.28, 0.10),
     new THREE.MeshBasicMaterial({
       map: textTex,
-      transparent: true,
+      transparent: false,
       alphaTest: 0.01,
       depthWrite: true,
       depthTest: true
@@ -452,7 +452,7 @@ function createBillboardButton({ position, iconUrl, title, popupImageUrl }) {
     popup.geometry = new THREE.PlaneGeometry(width, height);
     popup.material = new THREE.MeshBasicMaterial({
       map: texture,
-      transparent: true,
+      transparent: false,
       depthWrite: true,
       depthTest: true
     });
