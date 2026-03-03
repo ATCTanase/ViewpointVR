@@ -380,9 +380,6 @@ function createBillboardButton({ position, iconUrl, title, popupImageUrl }) {
     transparent: true,    
       depthTest: true,  
       depthWrite: true, 
-      polygonOffset: true,
-      polygonOffsetFactor: -1,
-      polygonOffsetUnits: -4
   });
 
   const bg = new THREE.Mesh(
@@ -755,7 +752,7 @@ scene.add(new THREE.AmbientLight(0xffffff, 1.0));
    Gaussian Splat (spark)
 ---------------------------------- */
 const splat = new SplatMesh({
-  url: './point_cloud_alpha_voxel_200k.ply',   // ← 自分の PLY
+  url: './point_cloud_alpha_voxel_200k.ply',
   pointSize: 0.04,
   alphaTest: 0.003
 });
@@ -763,15 +760,15 @@ const splat = new SplatMesh({
 //位置とスケール
 splat.rotation.set(Math.PI,Math.PI / 2, 0, "YXZ");
 splat.position.set(8, 0, -130);
-splat.renderOrder = 0;
+splat.renderOrder = 200;
 world.add(splat);
-console.log(splat);
-  if (splat.material) {
-    splat.material.depthWrite = true;
-    splat.material.alphaTest = 0.05; 
-    splat.material.needsUpdate = true;
-  }
+if (splat.material) {
+  splat.material.depthWrite = false;
+  splat.material.depthTest = true;
+  splat.material.needsUpdate = true;
+}
 
+console.log(splat);
 // ロード確認
 splat.onLoad = () => {
   console.log("Gaussian Splat loaded");
