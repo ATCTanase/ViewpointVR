@@ -32,6 +32,7 @@ document.body.appendChild(VRButton.createButton(renderer));
 ---------------------------------- */
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x000000);
+const uiScene = new THREE.Scene();
 
 const world = new THREE.Group();
 scene.add(world);
@@ -62,6 +63,7 @@ const menuData = [
 const uiGroup = new THREE.Group();
 uiGroup.position.set(0, -0.3, -1.5);
 camera.add(uiGroup);
+uiScene.add(uiGroup);
 const cameraGroup = new THREE.Group();
 scene.add(cameraGroup);
 cameraGroup.add(camera);
@@ -944,7 +946,9 @@ renderer.setAnimationLoop(() => {
   if (controls.enabled) {
     controls.update();
   }
+  renderer.clear();
   renderer.render(scene, camera);
+
   renderer.clearDepth();
-  renderer.render(uiGroup, camera);
+  renderer.render(uiScene, camera);
 });
