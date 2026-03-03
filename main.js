@@ -60,7 +60,7 @@ const menuData = [
 ];
 
 const uiGroup = new THREE.Group();
-uiGroup.position.set(0, -0.25, -1.5);
+uiGroup.position.set(0, -0.3, -1.5);
 camera.add(uiGroup);
 const cameraGroup = new THREE.Group();
 scene.add(cameraGroup);
@@ -348,7 +348,7 @@ const mapGroup = new THREE.Group();
 camera.add(mapGroup);
 
 // 左上配置（視界の左上）
-mapGroup.position.set(-0.3, 0.35, -1.2);
+mapGroup.position.set(-0.3, 0.35, -1.5);
 
 const mapTexture = new THREE.TextureLoader().load("./Map/MAP.png");
 
@@ -938,7 +938,7 @@ renderer.setAnimationLoop(() => {
     raycaster.ray.origin,
     raycaster.ray.direction
   );
-  
+
   if (controls.enabled) {
     controls.update();
   }
