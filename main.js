@@ -390,6 +390,7 @@ function createBillboardButton({ position, iconUrl, title, popupImageUrl }) {
     bgMat
   );
 
+  bg.renderOrder = 100; 
   group.add(bg);
 
   // アイコン
@@ -408,6 +409,7 @@ function createBillboardButton({ position, iconUrl, title, popupImageUrl }) {
 
   icon.position.set(0, 0.07, 0.01);
   group.add(icon);
+  icon.renderOrder = 101; 
 
   // タイトル
   const canvas = document.createElement("canvas");
@@ -433,6 +435,7 @@ function createBillboardButton({ position, iconUrl, title, popupImageUrl }) {
 
   text.position.set(0, -0.10, 0.01);
   group.add(text);
+  text.renderOrder = 101;
 
   // ===== ポップアップ =====
   const loader = new THREE.TextureLoader();
@@ -459,6 +462,7 @@ function createBillboardButton({ position, iconUrl, title, popupImageUrl }) {
   });
 
   group.add(popup);
+  popup.renderOrder = 101;
 
   // ===== データ =====
   group.userData.isBillboardButton = true;
