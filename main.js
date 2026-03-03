@@ -795,9 +795,9 @@ function applyTopOrder(object, orderValue) {
     if (obj.isMesh || obj.isLine) {
       obj.renderOrder = orderValue;
       if (obj.material) {
-        obj.material.depthTest = false;
-        obj.material.depthWrite = false;
-        obj.material.transparent = true;
+        obj.material.depthTest = true;
+        obj.material.depthWrite = true;
+        obj.material.transparent = false;
       }
       // 適用済みフラグを立てる
       obj.userData.appliedOrder = orderValue;
