@@ -762,15 +762,16 @@ splat.rotation.set(Math.PI,Math.PI / 2, 0, "YXZ");
 splat.position.set(8, 0, -130);
 world.add(splat);
 
-// splat.traverse((obj) => {
-//   obj.renderOrder = 10;
-//   if (obj.isMesh && obj.material) {
-//     obj.material.depthTest = true;
-//     obj.material.depthWrite = true; 
-//     obj.material.alphaTest = 0.1; 
-//     obj.material.needsUpdate = true;
-//   }
-// })
+splat.traverse((obj) => {
+  obj.renderOrder = 10;
+  if (obj.isMesh && obj.material) {
+    obj.material.depthTest = true;
+    obj.material.transparent = false;
+    obj.material.depthWrite = true; 
+    obj.material.alphaTest = 0.1; 
+    obj.material.needsUpdate = true;
+  }
+})
 
 /* ----------------------------------
    Resize
