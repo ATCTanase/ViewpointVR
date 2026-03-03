@@ -296,19 +296,9 @@ function updateHover(rayOrigin, rayDirection) {
 
   for (let i = 0; i < intersects.length; i++) {
     let obj = intersects[i].object;
-    let foundButton = null;
-
-    // 親を遡ってボタンを探す
-    while (obj) {
-      if (obj.userData?.isButton) {
-        foundButton = obj;
-        break;
-      }
-    }
-    if (foundButton) {
-      console.log(foundButton);
-      hovered = foundButton;
-      break;
+    if (obj.userData?.isButton) {
+      console.log(obj);
+      hovered = obj;
     }
   }
 
