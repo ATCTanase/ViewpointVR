@@ -810,7 +810,7 @@ function applyTopOrder(object, orderValue) {
 
 
 const clock = new THREE.Clock();
-
+renderer.autoClear = false;
 renderer.setAnimationLoop(() => {
   const delta = clock.getDelta();
   if (renderer.xr.isPresenting) {
