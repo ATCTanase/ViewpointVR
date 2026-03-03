@@ -946,7 +946,6 @@ renderer.setAnimationLoop(() => {
   }
   renderer.clear();
 
-  camera.remove(uiGroup);
   renderer.render(scene, camera);
   renderer.clearDepth();
   renderer.render(uiScene, camera);
