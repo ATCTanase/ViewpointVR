@@ -32,7 +32,6 @@ document.body.appendChild(VRButton.createButton(renderer));
 ---------------------------------- */
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x000000);
-const uiScene = new THREE.Scene();
 
 const world = new THREE.Group();
 scene.add(world);
@@ -66,7 +65,6 @@ camera.add(uiGroup);
 const cameraGroup = new THREE.Group();
 scene.add(cameraGroup);
 cameraGroup.add(camera);
-uiScene.add(camera);
 cameraGroup.position.set(0, 0, 3); 
 
 const rotationSpeed = 2.0; 
@@ -808,7 +806,6 @@ function applyTopOrder(object, orderValue) {
 
 
 const clock = new THREE.Clock();
-renderer.autoClear = false;
 renderer.setAnimationLoop(() => {
   const delta = clock.getDelta();
   if (renderer.xr.isPresenting) {
@@ -944,9 +941,6 @@ renderer.setAnimationLoop(() => {
   if (controls.enabled) {
     controls.update();
   }
-  renderer.clear();
 
   renderer.render(scene, camera);
-  renderer.clearDepth();
-  renderer.render(uiScene, camera);
 });
