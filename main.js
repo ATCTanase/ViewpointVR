@@ -145,15 +145,16 @@ function createButton(data) {
   //当たり判定（透明）
   const hitArea = new THREE.Mesh(
     bgGeometry,
-    new THREE.MeshBasicMaterial({ visible: false, transparent: true })
+    new THREE.MeshBasicMaterial({ visible: false })
   );
   
-  hitArea.userData = {
-    isButton: true,
-    onClick: data.action,
-    bgMaterial: bgMaterial,
-    defaultColor: new THREE.Color(0x5aa0bd)
-  };
+
+  hitArea.userData.onClick = data.action;
+  hitArea.userData.isButton = true;
+  group.add(hitArea);
+  
+  hitArea.userData.bgMaterial = bgMaterial;
+  hitArea.userData.defaultColor = new THREE.Color(0x5aa0bd);
 
   // アイコン
   const texture = new THREE.TextureLoader().load(data.icon);
