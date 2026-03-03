@@ -760,26 +760,17 @@ const splat = new SplatMesh({
 //位置とスケール
 splat.rotation.set(Math.PI,Math.PI / 2, 0, "YXZ");
 splat.position.set(8, 0, -130);
-splat.renderOrder = 200;
 world.add(splat);
 splat.traverse((obj) => {
-  console.log(obj.traverse);
-  obj.renderOrder = 200;
-  console.log(obj.isMesh);
-  console.log(obj.material);
+  obj.renderOrder = 10;
   if (obj.isMesh && obj.material) {
     obj.material.depthTest = true;
-    obj.material.depthWrite = false;
+    obj.material.depthWrite = true; 
+    obj.material.alphaTest = 0.1; 
     obj.material.needsUpdate = true;
   }
 })
 console.log(splat);
-// ロード確認
-splat.onLoad = () => {
-  console.log("Gaussian Splat loaded");
-   console.log(splat.material);
-   console.log(splat.material.uniforms);
-};
 
 /* ----------------------------------
    Resize
