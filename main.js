@@ -372,14 +372,15 @@ function createBillboardButton({ position, iconUrl, title, popupImageUrl }) {
 
   const group = new THREE.Group();
   group.position.copy(position);
+  group.renderOrder = 1; 
 
   const BUTTON_SIZE = 0.35;
 
   const bgMat = new THREE.MeshBasicMaterial({
     color: 0x5aa0bd,
-    transparent: true,    
-      // depthTest: true,  
-      // depthWrite: true, 
+    transparent: true, 
+    depthWrite: true,
+    depthTest: true,
   });
 
   const bg = new THREE.Mesh(
@@ -387,7 +388,6 @@ function createBillboardButton({ position, iconUrl, title, popupImageUrl }) {
     bgMat
   );
 
-  // bg.renderOrder = 100; 
   group.add(bg);
 
   // アイコン
@@ -399,14 +399,12 @@ function createBillboardButton({ position, iconUrl, title, popupImageUrl }) {
       map: iconTex,
       transparent: true,
       alphaTest: 0.01,
-      // depthTest: true,
-      // depthWrite: false
+      depthWrite: true,
     })
   );
 
   icon.position.set(0, 0.07, 0.01);
   group.add(icon);
-  // icon.renderOrder = 101;
 
   // タイトル
   const canvas = document.createElement("canvas");
@@ -425,14 +423,13 @@ function createBillboardButton({ position, iconUrl, title, popupImageUrl }) {
     new THREE.MeshBasicMaterial({
       map: textTex,
       transparent: true,
-      // depthTest: true, 
-      alphaTest: 0.01
+      alphaTest: 0.01,
+      depthWrite: true,
     })
   );
 
   text.position.set(0, -0.10, 0.01);
   group.add(text);
-  // text.renderOrder = 101;
 
   // ===== ポップアップ =====
   const loader = new THREE.TextureLoader();
@@ -454,12 +451,12 @@ function createBillboardButton({ position, iconUrl, title, popupImageUrl }) {
     popup.material = new THREE.MeshBasicMaterial({
       map: texture,
       transparent: true,
+      depthWrite: true,
     });
 
   });
 
   group.add(popup);
-  // popup.renderOrder = 101;
 
   // ===== データ =====
   group.userData.isBillboardButton = true;
@@ -760,16 +757,8 @@ const splat = new SplatMesh({
 //位置とスケール
 splat.rotation.set(Math.PI,Math.PI / 2, 0, "YXZ");
 splat.position.set(8, 0, -130);
+splat.renderOrder = 0;
 world.add(splat);
-// splat.traverse((obj) => {
-//   obj.renderOrder = 10;
-//   if (obj.isMesh && obj.material) {
-//     obj.material.depthTest = true;
-//     obj.material.depthWrite = true; 
-//     obj.material.alphaTest = 0.1; 
-//     obj.material.needsUpdate = true;
-//   }
-// })
 console.log(splat);
 
 /* ----------------------------------
