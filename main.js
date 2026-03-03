@@ -701,22 +701,23 @@ renderer.xr.addEventListener('sessionstart', () => {
         // Billboardボタン
         // =========================
 
-      if (obj.userData?.isBillboardButton) {
+        if (obj.userData?.isBillboardButton) {
 
-        const clicked = obj;
+          const clicked = obj;
 
-        // 全部閉じる
-        billboardButtons.forEach(btn => {
-          if(btn == obj){
-            clicked.userData.popup.visible = !clicked.userData.isOpen;
-            clicked.userData.isOpen = !clicked.userData.isOpen;
-          }else {
-            btn.userData.popup.visible = false;
-            btn.userData.isOpen = false;
-          }
-        });
+          // 全部閉じる
+          billboardButtons.forEach(btn => {
+            if(btn == obj){
+              clicked.userData.popup.visible = !clicked.userData.isOpen;
+              clicked.userData.isOpen = !clicked.userData.isOpen;
+            }else {
+              btn.userData.popup.visible = false;
+              btn.userData.isOpen = false;
+            }
+          });
 
-        obj = obj.parent;
+          obj = obj.parent;
+        }
       }
     }
   });
