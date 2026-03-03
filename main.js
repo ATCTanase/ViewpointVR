@@ -109,6 +109,8 @@ function createMenuBar(width, height) {
     geometry,
     material
   );
+  
+  bar.raycast = () => {}; 
   return bar;
 }
 
@@ -118,6 +120,7 @@ const totalWidth =
 const menuBar = createMenuBar(totalWidth, 0.3);
 menuBar.renderOrder = 1000;
 uiGroup.add(menuBar);
+
 function createButton(data) {
 
   const group = new THREE.Group();
@@ -267,16 +270,14 @@ window.addEventListener("click", (event) => {
 
         // 全部閉じる
         billboardButtons.forEach(btn => {
-          btn.userData.popup.visible = false;
-          btn.userData.isOpen = false;
+          if(btn == obj){
+            clicked.userData.popup.visible = !clicked.userData.isOpen;
+            clicked.userData.isOpen = !clicked.userData.isOpen;
+          }else {
+            btn.userData.popup.visible = false;
+            btn.userData.isOpen = false;
+          }
         });
-
-        // 開いてなければ開く
-        if (!clicked.userData.isOpen) {
-          clicked.userData.popup.visible = true;
-          clicked.userData.isOpen = true;
-        }
-
         return;
       }
 
@@ -286,7 +287,6 @@ window.addEventListener("click", (event) => {
 });
 
 function updateHover(rayOrigin, rayDirection) {
-
   raycaster.ray.origin.copy(rayOrigin);
   raycaster.ray.direction.copy(rayDirection);
 
@@ -296,30 +296,37 @@ function updateHover(rayOrigin, rayDirection) {
 
   for (let i = 0; i < intersects.length; i++) {
     let obj = intersects[i].object;
+    let foundButton = null;
 
+    // 親を遡ってボタンを探す
     while (obj) {
       if (obj.userData?.isButton) {
-        hovered = obj;
+        foundButton = obj;
         break;
       }
       obj = obj.parent;
     }
-    if (hovered) break;
+
+    if (foundButton) {
+      hovered = foundButton;
+      break;
+    }
   }
 
-  // 前回のホバー解除
+  // --- ホバー演出の更新 ---
   if (currentHover && currentHover !== hovered) {
-    currentHover.userData.bgMaterial.color.copy(
-      currentHover.userData.defaultColor
-    );
+    //元の色に戻す
+    if (currentHover.userData.bgMaterial) {
+      currentHover.userData.bgMaterial.color.copy(currentHover.userData.defaultColor);
+    }
   }
 
-  // 新ホバー
   if (hovered && hovered !== currentHover) {
-    const base = hovered.userData.defaultColor.clone();
-    hovered.userData.bgMaterial.color.copy(
-      base.multiplyScalar(1.3)
-    );
+    //明るくする
+    if (hovered.userData.bgMaterial) {
+      const base = hovered.userData.defaultColor.clone();
+      hovered.userData.bgMaterial.color.copy(base.multiplyScalar(1.3));
+    }
   }
 
   currentHover = hovered;
