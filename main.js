@@ -300,7 +300,7 @@ function updateHover(rayOrigin, rayDirection) {
 
     // 親を遡ってボタンを探す
     while (obj) {
-      Debug.log(obj);
+      console.log(obj);
       if (obj.userData?.isButton) {
         foundButton = obj;
         break;
@@ -774,7 +774,11 @@ splat.position.set(8, 0, -130);
 splat.renderOrder = 0;
 world.add(splat);
 console.log(splat);
-console.log(splat.uniforms);
+  if (splat.material) {
+    splat.material.depthWrite = true;
+    splat.material.alphaTest = 0.05; 
+    splat.material.needsUpdate = true;
+  }
 
 // ロード確認
 splat.onLoad = () => {
