@@ -101,7 +101,7 @@ function createMenuBar(width, height) {
       color: 0x2f5f75,
       transparent: true,
       opacity: 0.85,
-      depthTest: false,
+      depthTest: true,
       depthWrite: false
   });
 
@@ -138,7 +138,7 @@ function createButton(data) {
     color: 0x5aa0bd,
     transparent: true,
     opacity: 0.95,
-    depthTest: false,
+    depthTest: true,
     depthWrite: false
   });
   const bg = new THREE.Mesh(bgGeometry, bgMaterial);
@@ -167,7 +167,7 @@ function createButton(data) {
     new THREE.MeshBasicMaterial({
       map: texture,
       transparent: true,
-      depthTest: false,
+      depthTest: true,
       depthWrite: false
     })
   );
@@ -200,7 +200,7 @@ function createButton(data) {
     new THREE.MeshBasicMaterial({
       map: textTexture,
       transparent: true,
-      depthTest: false,
+      depthTest: true,
       depthWrite: false
     })
   );
@@ -945,4 +945,6 @@ renderer.setAnimationLoop(() => {
     controls.update();
   }
   renderer.render(scene, camera);
+  renderer.clearDepth();
+  renderer.render(uiGroup, camera);
 });
