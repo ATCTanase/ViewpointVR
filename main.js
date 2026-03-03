@@ -60,7 +60,7 @@ const menuData = [
 ];
 
 const uiGroup = new THREE.Group();
-uiGroup.position.set(0, -0.3, -1.5);
+uiGroup.position.set(0, -0.5, -1.5);
 camera.add(uiGroup);
 const cameraGroup = new THREE.Group();
 scene.add(cameraGroup);
@@ -110,7 +110,6 @@ function createMenuBar(width, height) {
     material
   );
   
-  // bar.raycast = () => {}; 
   return bar;
 }
 
