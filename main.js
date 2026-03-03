@@ -32,6 +32,7 @@ document.body.appendChild(VRButton.createButton(renderer));
 ---------------------------------- */
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x000000);
+const uiScene = new THREE.Scene();
 
 const world = new THREE.Group();
 scene.add(world);
@@ -65,6 +66,7 @@ camera.add(uiGroup);
 const cameraGroup = new THREE.Group();
 scene.add(cameraGroup);
 cameraGroup.add(camera);
+uiScene.add(camera);
 cameraGroup.position.set(0, 0, 3); 
 
 const rotationSpeed = 2.0; 
@@ -947,6 +949,5 @@ renderer.setAnimationLoop(() => {
   camera.remove(uiGroup);
   renderer.render(scene, camera);
   renderer.clearDepth();
-  camera.add(uiGroup);
-  renderer.render(scene, camera);
+  renderer.render(uiScene, camera);
 });
