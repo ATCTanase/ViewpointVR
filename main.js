@@ -214,6 +214,7 @@ menuData.forEach((data, i) => {
 
   btn.position.x =
     (i - (menuData.length - 1) / 2) * spacing;
+  btn.position.y = -0.02; 
 
   uiGroup.add(btn);
 });
