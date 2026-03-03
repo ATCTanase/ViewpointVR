@@ -700,7 +700,6 @@ renderer.xr.addEventListener('sessionstart', () => {
         // =========================
         // Billboardボタン
         // =========================
-
         if (obj.userData?.isBillboardButton) {
 
           const clicked = obj;
@@ -715,9 +714,10 @@ renderer.xr.addEventListener('sessionstart', () => {
               btn.userData.isOpen = false;
             }
           });
-
-          obj = obj.parent;
+          return;
         }
+        
+        obj = obj.parent;
       }
     }
   });
