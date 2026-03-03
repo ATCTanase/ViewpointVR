@@ -762,6 +762,7 @@ splat.rotation.set(Math.PI,Math.PI / 2, 0, "YXZ");
 splat.position.set(8, 0, -130);
 splat.renderOrder = 200;
 world.add(splat);
+console.log(splat.material);
 if (splat.material) {
   splat.material.depthWrite = false;
   splat.material.depthTest = true;
