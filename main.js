@@ -406,7 +406,7 @@ function createBillboardButton({ position, iconUrl, title, popupImageUrl }) {
 
   icon.position.set(0, 0.07, 0.01);
   group.add(icon);
-  icon.renderOrder = 101; 
+  // icon.renderOrder = 101;
 
   // タイトル
   const canvas = document.createElement("canvas");
