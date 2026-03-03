@@ -372,13 +372,13 @@ function createBillboardButton({ position, iconUrl, title, popupImageUrl }) {
 
   const group = new THREE.Group();
   group.position.copy(position);
-  group.renderOrder = 1; 
 
   const BUTTON_SIZE = 0.35;
 
   const bgMat = new THREE.MeshBasicMaterial({
     color: 0x5aa0bd,
     transparent: true, 
+    alphaTest: 0.01,
     depthWrite: true,
     depthTest: true,
   });
@@ -400,6 +400,7 @@ function createBillboardButton({ position, iconUrl, title, popupImageUrl }) {
       transparent: true,
       alphaTest: 0.01,
       depthWrite: true,
+      depthTest: true
     })
   );
 
@@ -425,6 +426,7 @@ function createBillboardButton({ position, iconUrl, title, popupImageUrl }) {
       transparent: true,
       alphaTest: 0.01,
       depthWrite: true,
+      depthTest: true
     })
   );
 
@@ -452,6 +454,7 @@ function createBillboardButton({ position, iconUrl, title, popupImageUrl }) {
       map: texture,
       transparent: true,
       depthWrite: true,
+      depthTest: true
     });
 
   });
@@ -757,18 +760,17 @@ const splat = new SplatMesh({
 //位置とスケール
 splat.rotation.set(Math.PI,Math.PI / 2, 0, "YXZ");
 splat.position.set(8, 0, -130);
-splat.renderOrder = 0;
 world.add(splat);
 
-splat.traverse((obj) => {
-  obj.renderOrder = 10;
-  if (obj.isMesh && obj.material) {
-    obj.material.depthTest = true;
-    obj.material.depthWrite = true; 
-    obj.material.alphaTest = 0.1; 
-    obj.material.needsUpdate = true;
-  }
-})
+// splat.traverse((obj) => {
+//   obj.renderOrder = 10;
+//   if (obj.isMesh && obj.material) {
+//     obj.material.depthTest = true;
+//     obj.material.depthWrite = true; 
+//     obj.material.alphaTest = 0.1; 
+//     obj.material.needsUpdate = true;
+//   }
+// })
 
 /* ----------------------------------
    Resize
