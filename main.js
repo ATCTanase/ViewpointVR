@@ -700,24 +700,21 @@ renderer.xr.addEventListener('sessionstart', () => {
         // =========================
         // Billboardボタン
         // =========================
-        if (obj.userData?.isBillboardButton) {
 
-          const clicked = obj;
+      if (obj.userData?.isBillboardButton) {
 
-          // 全部閉じる
-          billboardButtons.forEach(btn => {
+        const clicked = obj;
+
+        // 全部閉じる
+        billboardButtons.forEach(btn => {
+          if(btn == obj){
+            clicked.userData.popup.visible = !clicked.userData.isOpen;
+            clicked.userData.isOpen = !clicked.userData.isOpen;
+          }else {
             btn.userData.popup.visible = false;
             btn.userData.isOpen = false;
-          });
-
-          // 開いてなければ開く
-          if (!clicked.userData.isOpen) {
-            clicked.userData.popup.visible = true;
-            clicked.userData.isOpen = true;
           }
-
-          return;
-        }
+        });
 
         obj = obj.parent;
       }
