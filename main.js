@@ -297,7 +297,6 @@ function updateHover(rayOrigin, rayDirection) {
   for (let i = 0; i < intersects.length; i++) {
     let obj = intersects[i].object;
     if (obj.userData?.isButton) {
-      console.log(obj);
       hovered = obj;
     }
   }
@@ -919,10 +918,6 @@ renderer.setAnimationLoop(() => {
       }
     }
   }
-  updateHover(
-    raycaster.ray.origin,
-    raycaster.ray.direction
-  );
 
   
   cameraGroup.updateMatrixWorld(true);
@@ -938,6 +933,12 @@ renderer.setAnimationLoop(() => {
   updateCameraRotation();
   updateMovement(delta);
 
+  
+  updateHover(
+    raycaster.ray.origin,
+    raycaster.ray.direction
+  );
+  
   if (controls.enabled) {
     controls.update();
   }
