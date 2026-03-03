@@ -300,14 +300,13 @@ function updateHover(rayOrigin, rayDirection) {
 
     // 親を遡ってボタンを探す
     while (obj) {
-      console.log(obj);
       if (obj.userData?.isButton) {
         foundButton = obj;
         break;
       }
     }
-
     if (foundButton) {
+      console.log(foundButton);
       hovered = foundButton;
       break;
     }
