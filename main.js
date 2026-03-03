@@ -67,6 +67,11 @@ scene.add(cameraGroup);
 cameraGroup.add(camera);
 cameraGroup.position.set(0, 0, 3); 
 
+const intersectTargets = [
+  ...uiGroup.children,
+  ...billboardButtons
+];
+
 const rotationSpeed = 2.0; 
 
 const menu = new THREE.Group();
@@ -110,7 +115,7 @@ function createMenuBar(width, height) {
     material
   );
   
-  bar.raycast = () => {}; 
+  // bar.raycast = () => {}; 
   return bar;
 }
 
@@ -232,11 +237,7 @@ window.addEventListener("click", (event) => {
 
   raycaster.setFromCamera(mouse, camera);
 
-  const targets = [
-    ...uiGroup.children,
-    ...billboardButtons
-  ];
-  const intersects = raycaster.intersectObjects(targets, true);
+  const intersects = raycaster.intersectObjects(intersectTargets, true);
 
   for (let i = 0; i < intersects.length; i++) {
 
@@ -668,11 +669,7 @@ renderer.xr.addEventListener('sessionstart', () => {
     raycaster.ray.origin.setFromMatrixPosition(controller2.matrixWorld);
     raycaster.ray.direction.set(0, 0, -1).applyMatrix4(tempMatrix);
 
-    const targets = [
-      ...uiGroup.children,
-      ...billboardButtons
-    ];
-    const intersects = raycaster.intersectObjects(targets, true);
+    const intersects = raycaster.intersectObjects(intersectTargets, true);
 
     for (let i = 0; i < intersects.length; i++) {
 
@@ -906,7 +903,7 @@ renderer.setAnimationLoop(() => {
         raycaster.ray.origin.setFromMatrixPosition(controller2.matrixWorld);
         raycaster.ray.direction.set(0, 0, -1).applyMatrix4(tempMatrix);
 
-        const intersects = raycaster.intersectObjects(uiGroup.children, true);
+        const intersects = raycaster.intersectObjects(intersectTargets, true);
 
         if (intersects.length > 0) {
           laser.scale.z = intersects[0].distance;
