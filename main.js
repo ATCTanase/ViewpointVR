@@ -337,6 +337,7 @@ function openSetting() {
 }
 
 function exitApp() {
+  window.location.reload();
   console.log("終了");
 }
 
@@ -554,6 +555,9 @@ window.addEventListener("keydown", (e) => {
       case "KeyQ": keys.down = true; break;
       case "ShiftLeft":
       case "ShiftRight": keys.sprint = true; break;
+      case "Escape": 
+        uiGroup.visible = !uiGroup.visible;
+        break;
     }
   });
 
@@ -653,6 +657,10 @@ renderer.xr.addEventListener('sessionstart', () => {
     transparent: true,
     renderOrder: 2001
   });
+  controller1.addEventListener("selectstart", () => {
+    uiGroup.visible = !uiGroup.visible;
+});
+
   laser = new THREE.Line(geometry, material);
   laser.renderOrder = 2001;
   laser.scale.z = 5;
