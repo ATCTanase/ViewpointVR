@@ -328,8 +328,7 @@ function open360() {
 
 function openMap() {
   console.log("MAP");
-  uiIsVisible = !uiIsVisible;
-  mapGroup.visible = uiIsVisible;
+  mapGroup.visible = !mapGroup.visible ;
 }
 
 function openInfo() {
@@ -566,7 +565,7 @@ window.addEventListener("keydown", (e) => {
       case "ShiftRight": keys.sprint = true; break;
       case "Escape": 
         uiIsVisible = !uiIsVisible;
-        mapGroup.visible = uiIsVisible;
+        uiGroup.visible = uiIsVisible;
         break;
     }
   });
@@ -668,7 +667,8 @@ renderer.xr.addEventListener('sessionstart', () => {
     renderOrder: 2001
   });
   controller1.addEventListener("selectstart", () => {
-    uiGroup.visible = !uiGroup.visible;
+    uiIsVisible = !uiIsVisible;
+    uiGroup.visible = uiIsVisible;
 });
 
   laser = new THREE.Line(geometry, material);
