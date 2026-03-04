@@ -224,6 +224,8 @@ menuData.forEach((data, i) => {
 });
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
+raycaster.near = 0;
+raycaster.far = 5;
 
 window.addEventListener("click", (event) => {
 
@@ -566,6 +568,7 @@ window.addEventListener("keydown", (e) => {
       case "Escape": 
         uiIsVisible = !uiIsVisible;
         uiGroup.visible = uiIsVisible;
+        if (!uiIsVisible) mapGroup.visible = false;
         break;
     }
   });
@@ -669,11 +672,12 @@ renderer.xr.addEventListener('sessionstart', () => {
   controller1.addEventListener("selectstart", () => {
     uiIsVisible = !uiIsVisible;
     uiGroup.visible = uiIsVisible;
+    if (!uiIsVisible) mapGroup.visible = false;
 });
 
   laser = new THREE.Line(geometry, material);
   laser.renderOrder = 2001;
-  laser.scale.z = 5;
+  laser.scale.z = 2;
 
   controller2.add(laser);
 
@@ -927,7 +931,7 @@ renderer.setAnimationLoop(() => {
         if (intersects.length > 0) {
           laser.scale.z = intersects[0].distance;
         } else {
-          laser.scale.z = 1;
+          laser.scale.z = 2;
         }
       }
     }
