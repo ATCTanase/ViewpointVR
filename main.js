@@ -247,21 +247,19 @@ window.addEventListener("click", (event) => {
       // HUDボタン
       // =========================
       
-      if(uiIsVisible){
-        if (obj.userData?.isButton) {
+      if (obj.userData?.isButton) {
+        const mat = obj.userData.bgMaterial;
 
-          const mat = obj.userData.bgMaterial;
+        mat.color.multiplyScalar(0.7);
 
-          mat.color.multiplyScalar(0.7);
+        setTimeout(() => {
+          mat.color.copy(obj.userData.defaultColor);
+        }, 120);
 
-          setTimeout(() => {
-            mat.color.copy(obj.userData.defaultColor);
-          }, 120);
-
-          obj.userData.onClick();
-          return;
-        }
+        obj.userData.onClick();
+        return;
       }
+      
 
       // =========================
       // Billboardボタン
@@ -330,7 +328,7 @@ function open360() {
 
 function openMap() {
   console.log("MAP");
-  uiIsVisible !=  uiIsVisible;
+  uiIsVisible = !uiIsVisible;
   mapGroup.visible = uiIsVisible;
 }
 
@@ -567,7 +565,7 @@ window.addEventListener("keydown", (e) => {
       case "ShiftLeft":
       case "ShiftRight": keys.sprint = true; break;
       case "Escape": 
-        uiIsVisible !=  uiIsVisible;
+        uiIsVisible = !uiIsVisible;
         mapGroup.visible = uiIsVisible;
         break;
     }
@@ -701,20 +699,17 @@ renderer.xr.addEventListener('sessionstart', () => {
         // =========================
         // HUDボタン
         // =========================
-        if(uiIsVisible){
-          if (obj.userData?.isButton) {
+        if (obj.userData?.isButton) {
+          const mat = obj.userData.bgMaterial;
+          
+          mat.color.multiplyScalar(0.7);
 
-            const mat = obj.userData.bgMaterial;
+          setTimeout(() => {
+            mat.color.copy(obj.userData.defaultColor);
+          }, 120);
 
-            mat.color.multiplyScalar(0.7);
-
-            setTimeout(() => {
-              mat.color.copy(obj.userData.defaultColor);
-            }, 120);
-
-            obj.userData.onClick();
-            return;
-          }
+          obj.userData.onClick();
+          return;
         }
 
         // =========================
