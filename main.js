@@ -337,7 +337,12 @@ function openSetting() {
 }
 
 function exitApp() {
-  window.location.reload();
+  if (renderer.xr.isPresenting) {
+    const session = renderer.xr.getSession();
+    if (session) session.end();
+  }else{
+    window.location.reload();
+  }
   console.log("終了");
 }
 
