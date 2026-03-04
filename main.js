@@ -235,7 +235,7 @@ window.addEventListener("click", (event) => {
     ...uiGroup.children,
     ...billboardButtons
   ];
-  const intersects = raycaster.intersectObjects(targets, true);
+  const intersects = raycaster.intersectObjects(targets, true).filter(i => i.object.visible);
 
   for (let i = 0; i < intersects.length; i++) {
 
@@ -684,7 +684,7 @@ renderer.xr.addEventListener('sessionstart', () => {
       ...uiGroup.children,
       ...billboardButtons
     ];
-    const intersects = raycaster.intersectObjects(targets, true);
+    const intersects = raycaster.intersectObjects(targets, true).filter(i => i.object.visible);
 
     for (let i = 0; i < intersects.length; i++) {
 
@@ -919,7 +919,7 @@ renderer.setAnimationLoop(() => {
           ...uiGroup.children,
           ...billboardButtons
         ];
-        const intersects = raycaster.intersectObjects(targets, true);
+        const intersects = raycaster.intersectObjects(targets, true).filter(i => i.object.visible);
 
         if (intersects.length > 0) {
           laser.scale.z = intersects[0].distance;
