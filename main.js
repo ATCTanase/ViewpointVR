@@ -14,6 +14,7 @@ let controllerGrip1, controllerGrip2;
 let tempMatrix = new THREE.Matrix4();
 let laser = null;
 let currentHover = null;
+let uiIsVisible = true;
 
 const billboardButtons = [];
 
@@ -231,11 +232,10 @@ window.addEventListener("click", (event) => {
 
   raycaster.setFromCamera(mouse, camera);
 
-  const targets = [
-    ...uiGroup.children,
-    ...billboardButtons
-  ];
-  const intersects = raycaster.intersectObjects(targets, true).filter(i => i.object.visible);
+  const targets = uiIsVisible
+    ? [...uiGroup.children, ...billboardButtons]
+    : [...billboardButtons];
+  const intersects = raycaster.intersectObjects(targets, true);
 
   for (let i = 0; i < intersects.length; i++) {
 
@@ -246,18 +246,21 @@ window.addEventListener("click", (event) => {
       // =========================
       // HUDボタン
       // =========================
-      if (obj.userData?.isButton) {
+      
+      if(uiIsVisible){
+        if (obj.userData?.isButton) {
 
-        const mat = obj.userData.bgMaterial;
+          const mat = obj.userData.bgMaterial;
 
-        mat.color.multiplyScalar(0.7);
+          mat.color.multiplyScalar(0.7);
 
-        setTimeout(() => {
-          mat.color.copy(obj.userData.defaultColor);
-        }, 120);
+          setTimeout(() => {
+            mat.color.copy(obj.userData.defaultColor);
+          }, 120);
 
-        obj.userData.onClick();
-        return;
+          obj.userData.onClick();
+          return;
+        }
       }
 
       // =========================
@@ -286,6 +289,8 @@ window.addEventListener("click", (event) => {
 });
 
 function updateHover(rayOrigin, rayDirection) {
+  if(!uiIsVisible) return;
+
   raycaster.ray.origin.copy(rayOrigin);
   raycaster.ray.direction.copy(rayDirection);
 
@@ -325,7 +330,8 @@ function open360() {
 
 function openMap() {
   console.log("MAP");
-  mapGroup.visible = !mapGroup.visible;
+  uiIsVisible !=  uiIsVisible;
+  mapGroup.visible = uiIsVisible;
 }
 
 function openInfo() {
@@ -561,7 +567,8 @@ window.addEventListener("keydown", (e) => {
       case "ShiftLeft":
       case "ShiftRight": keys.sprint = true; break;
       case "Escape": 
-        uiGroup.visible = !uiGroup.visible;
+        uiIsVisible !=  uiIsVisible;
+        mapGroup.visible = uiIsVisible;
         break;
     }
   });
@@ -680,11 +687,10 @@ renderer.xr.addEventListener('sessionstart', () => {
     raycaster.ray.origin.setFromMatrixPosition(controller2.matrixWorld);
     raycaster.ray.direction.set(0, 0, -1).applyMatrix4(tempMatrix);
 
-    const targets = [
-      ...uiGroup.children,
-      ...billboardButtons
-    ];
-    const intersects = raycaster.intersectObjects(targets, true).filter(i => i.object.visible);
+    const targets = uiIsVisible
+      ? [...uiGroup.children, ...billboardButtons]
+      : [...billboardButtons];
+    const intersects = raycaster.intersectObjects(targets, true);
 
     for (let i = 0; i < intersects.length; i++) {
 
@@ -695,18 +701,20 @@ renderer.xr.addEventListener('sessionstart', () => {
         // =========================
         // HUDボタン
         // =========================
-        if (obj.userData?.isButton) {
+        if(uiIsVisible){
+          if (obj.userData?.isButton) {
 
-          const mat = obj.userData.bgMaterial;
+            const mat = obj.userData.bgMaterial;
 
-          mat.color.multiplyScalar(0.7);
+            mat.color.multiplyScalar(0.7);
 
-          setTimeout(() => {
-            mat.color.copy(obj.userData.defaultColor);
-          }, 120);
+            setTimeout(() => {
+              mat.color.copy(obj.userData.defaultColor);
+            }, 120);
 
-          obj.userData.onClick();
-          return;
+            obj.userData.onClick();
+            return;
+          }
         }
 
         // =========================
@@ -914,17 +922,17 @@ renderer.setAnimationLoop(() => {
 
         raycaster.ray.origin.setFromMatrixPosition(controller2.matrixWorld);
         raycaster.ray.direction.set(0, 0, -1).applyMatrix4(tempMatrix);
+        
+        const targets = uiIsVisible
+          ? [...uiGroup.children, ...billboardButtons]
+          : [...billboardButtons];
 
-        const targets = [
-          ...uiGroup.children,
-          ...billboardButtons
-        ];
-        const intersects = raycaster.intersectObjects(targets, true).filter(i => i.object.visible);
+        const intersects = raycaster.intersectObjects(targets, true);
 
         if (intersects.length > 0) {
           laser.scale.z = intersects[0].distance;
         } else {
-          laser.scale.z = 5;
+          laser.scale.z = 1;
         }
       }
     }
