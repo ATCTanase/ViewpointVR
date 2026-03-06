@@ -21,7 +21,7 @@ const billboardButtons = [];
 const params = new URLSearchParams(window.location.search);
 const sceneName = params.get("model") || "0";
 
-const sceneConfigs = {
+const modelConfigs = {
   "0": {
     ply: "./point_cloud_alpha_voxel_200k.ply",
     position: [8,0,-130],
@@ -31,12 +31,12 @@ const sceneConfigs = {
 
   "1": {
     ply: "./Hydroelectric_sh0_alpha_voxel_200k.ply",
-    position: [2.5,2,-5],
+    position: [2.5,2,-4],
     rotation: [THREE.MathUtils.degToRad(94),-Math.PI/2,0],
     scale: 10
   }
 };
-const config = sceneConfigs[sceneName];
+const config = modelConfigs[sceneName];
 
 /* ----------------------------------
    Renderer
