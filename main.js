@@ -18,6 +18,26 @@ let uiIsVisible = true;
 
 const billboardButtons = [];
 
+const params = new URLSearchParams(window.location.search);
+const sceneName = params.get("model") || "0";
+
+const config = sceneConfigs[sceneName];
+const sceneConfigs = {
+  "0": {
+    ply: "./point_cloud_alpha_voxel_200k.ply",
+    position: [8,0,-130],
+    rotation: [Math.PI, Math.PI/2, 0],
+    scale: 1
+  },
+
+  "1": {
+    ply: "./Hydroelectric_sh0_alpha_voxel_200k.ply",
+    position: [2.5,1,-7.5],
+    rotation: [THREE.MathUtils.degToRad(94),-Math.PI/2,0],
+    scale: 10
+  }
+};
+
 /* ----------------------------------
    Renderer
 ---------------------------------- */
@@ -642,7 +662,7 @@ renderer.xr.addEventListener('sessionstart', () => {
   controls.enabled = false;
 
   cameraGroup.position.set(0, 0, 3); 
-  
+
   controllerGrip1 = renderer.xr.getControllerGrip(0);
   const model1 = controllerModelFactory.createControllerModel(controllerGrip1);
   controllerGrip1.add(model1);
@@ -769,14 +789,15 @@ scene.add(new THREE.AmbientLight(0xffffff, 1.0));
    Gaussian Splat (spark)
 ---------------------------------- */
 const splat = new SplatMesh({
-  url: './point_cloud_alpha_voxel_200k.ply',
+  url: config.ply,
   pointSize: 0.04,
   alphaTest: 0.003
 });
 
 //位置とスケール
-splat.rotation.set(Math.PI,Math.PI / 2, 0, "YXZ");
-splat.position.set(8, 0, -130);
+splat.rotation.set(...config.rotation,"YXZ");
+splat.position.set(...config.position);
+splat.scale.setScalar(config.scale);
 world.add(splat);
 
 splat.traverse((obj) => {
