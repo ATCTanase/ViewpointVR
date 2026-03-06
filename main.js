@@ -31,7 +31,7 @@ const sceneConfigs = {
 
   "1": {
     ply: "./Hydroelectric_sh0_alpha_voxel_200k.ply",
-    position: [2.5,0,-10],
+    position: [2.5,2,-5],
     rotation: [THREE.MathUtils.degToRad(94),-Math.PI/2,0],
     scale: 10
   }
