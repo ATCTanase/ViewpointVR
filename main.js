@@ -604,7 +604,7 @@ function updateMovement(delta) {
 
   velocity.normalize();
 
-  // 🔥 カメラのY回転だけ取得
+  // カメラのY回転だけ取得
   const euler = new THREE.Euler(0, 0, 0, "YXZ");
   euler.setFromQuaternion(camera.quaternion);
 
@@ -642,7 +642,7 @@ renderer.xr.addEventListener('sessionstart', () => {
   controls.enabled = false;
 
   cameraGroup.position.set(0, 0, 3); 
-    // 表示用（見える）
+  
   controllerGrip1 = renderer.xr.getControllerGrip(0);
   const model1 = controllerModelFactory.createControllerModel(controllerGrip1);
   controllerGrip1.add(model1);
@@ -856,9 +856,7 @@ renderer.setAnimationLoop(() => {
         if (!source.gamepad) return;
 
         const gp = source.gamepad;
-        // ======================
         // 右手：回転
-        // ======================
         if (source.handedness === "right") {
 
           const axes = gp.axes;
@@ -875,9 +873,7 @@ renderer.setAnimationLoop(() => {
           }
         }
 
-        // ======================
         // 左手：移動
-        // ======================
         if (source.handedness === "left") {
 
           const axes = gp.axes;
@@ -915,6 +911,7 @@ renderer.setAnimationLoop(() => {
         }
       });
 
+      //レーザー
       if (controller2 && laser) {
 
         tempMatrix.identity().extractRotation(controller2.matrixWorld);
