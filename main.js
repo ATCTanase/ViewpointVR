@@ -36,7 +36,34 @@ const modelConfigs = {
     scale: 10
   }
 };
-const config = modelConfigs[sceneName];
+
+const billboardConfigs = {
+  "0": [{
+      position: new THREE.Vector3(0, 1.5, -3),
+      iconUrl: "./icon/Info.png",
+      title: "360°画像",
+      popupImageUrl: "./Image/360_Image.png"},
+    {
+      position: new THREE.Vector3(2, 1.5, -4),
+      iconUrl: "./icon/Info.png",
+      title: "設備情報",
+      popupImageUrl: "./Image/Facility_Info.png"
+  }],
+  "1": [{
+      position: new THREE.Vector3(0, 1.5, -3),
+      iconUrl: "./icon/Info.png",
+      title: "360°画像",
+      popupImageUrl: "./Image/360_Image.png"},
+    {
+      position: new THREE.Vector3(2, 1.5, -4),
+      iconUrl: "./icon/Info.png",
+      title: "設備情報",
+      popupImageUrl: "./Image/Facility_Info.png"
+  }]
+}
+
+const modelConfig = modelConfigs[sceneName];
+const billboardConfig = billboardConfigs[sceneName];
 
 /* ----------------------------------
    Renderer
@@ -501,19 +528,15 @@ function createBillboardButton({ position, iconUrl, title, popupImageUrl }) {
   return group;
 }
 
-world.add(createBillboardButton({
-  position: new THREE.Vector3(0, 1.5, -3),
-  iconUrl: "./icon/Info.png",
-  title: "360°画像",
-  popupImageUrl: "./Image/360_Image.png"
-}));
 
-world.add(createBillboardButton({
-  position: new THREE.Vector3(2, 1.5, -4),
-  iconUrl: "./icon/Info.png",
-  title: "設備情報",
-  popupImageUrl: "./Image/Facility_Info.png"
-}));
+billboardConfig.forEach(config => {
+  world.add(createBillboardButton({
+    position: config.position,
+    iconUrl: config.iconUrl,
+    title: config.title,
+    popupImageUrl: config.popupImageUrl
+  }));
+});
 
 /* ----------------------------------
    PC Controls (OrbitControls)
@@ -789,15 +812,15 @@ scene.add(new THREE.AmbientLight(0xffffff, 1.0));
    Gaussian Splat (spark)
 ---------------------------------- */
 const splat = new SplatMesh({
-  url: config.ply,
+  url: modelConfig.ply,
   pointSize: 0.04,
   alphaTest: 0.003
 });
 
 //位置とスケール
-splat.rotation.set(...config.rotation,"YXZ");
-splat.position.set(...config.position);
-splat.scale.setScalar(config.scale);
+splat.rotation.set(...modelConfig.rotation,"YXZ");
+splat.position.set(...modelConfig.position);
+splat.scale.setScalar(modelConfig.scale);
 world.add(splat);
 
 splat.traverse((obj) => {
