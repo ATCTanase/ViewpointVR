@@ -21,7 +21,6 @@ const billboardButtons = [];
 const params = new URLSearchParams(window.location.search);
 const sceneName = params.get("model") || "0";
 
-const config = sceneConfigs[sceneName];
 const sceneConfigs = {
   "0": {
     ply: "./point_cloud_alpha_voxel_200k.ply",
@@ -37,6 +36,7 @@ const sceneConfigs = {
     scale: 10
   }
 };
+const config = sceneConfigs[sceneName];
 
 /* ----------------------------------
    Renderer
