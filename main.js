@@ -30,7 +30,7 @@ const modelConfigs = {
   },
 
   "1": {
-    ply: "./Hydroelectric_sh0_alpha_voxel_200k.ply",
+    ply: "./Hydroelectric_sh0_cropped_alpha_voxel_200k.ply",
     position: [2.5,2,-4],
     rotation: [THREE.MathUtils.degToRad(94),-Math.PI/2,0],
     scale: 10
