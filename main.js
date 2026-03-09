@@ -407,6 +407,7 @@ function exitApp() {
 // Map UI
 // ---------------------------
 async function Exists(url) {
+  console.log("check url:", url);
   try {
     const res = await fetch(url, { method: "HEAD" });
     return res.ok;
