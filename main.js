@@ -406,26 +406,25 @@ function exitApp() {
 // ---------------------------
 // Map UI
 // ---------------------------
-async function Exists(url) {
-  console.log("check url:", url);
-  try {
-    const res = await fetch(url, { method: "HEAD" });
-    return res.ok;
-  } catch {
-    return false;
-  }
-}
+function imageExists(url) {
+  return new Promise((resolve) => {
+    const img = new Image();
 
+    img.onload = () => resolve(true);
+    img.onerror = () => resolve(false);
+
+    img.src = url;
+  });
+}
 const mapGroup = new THREE.Group();
 camera.add(mapGroup);
 
 // 左上配置（視界の左上）
 mapGroup.position.set(-0.3, 0.35, -1.5);
 const path = map[sceneName].map;
-Exists(path).then(exists => {
-  if (exists) {
+const exists = await imageExists(path);
+if (exists) {
   const mapTexture = new THREE.TextureLoader().load(path);
-
   const mapMesh = new THREE.Mesh(
     new THREE.PlaneGeometry(0.4, 0.4),
     new THREE.MeshBasicMaterial({
@@ -437,14 +436,11 @@ Exists(path).then(exists => {
   );
 
   mapGroup.add(mapMesh);
-
   mapMesh.renderOrder = 1002;
   // 初期は非表示
   mapGroup.visible = false;
-  }
-  else
-  {}
-});
+}
+
 function createBillboardButton({ position, iconUrl, title, popupImageUrl }) {
 
   const group = new THREE.Group();
@@ -550,7 +546,7 @@ function createBillboardButton({ position, iconUrl, title, popupImageUrl }) {
 
 
 billboardConfig.forEach(config => {  
-  Exists(config.popupImageUrl).then(exists => {
+  const exists = await(config.popupImageUrl)
   if (exists) {
     world.add(createBillboardButton({
       position: config.position,
@@ -558,7 +554,7 @@ billboardConfig.forEach(config => {
       title: config.title,
       popupImageUrl: config.popupImageUrl
     }));
-  }});
+  }
 });
 
 /* ----------------------------------
