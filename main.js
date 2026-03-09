@@ -47,12 +47,12 @@ const billboardConfigs = {
       position: new THREE.Vector3(0, 1.5, -3),
       iconUrl: "./icon/Info.png",
       title: "360°画像",
-      popupImageUrl: `./${name[1]}/Image/360_Image.png`},
+      popupImageUrl: `./${name[0]}/Image/360_Image.png`},
     {
       position: new THREE.Vector3(2, 1.5, -4),
       iconUrl: "./icon/Info.png",
       title: "設備情報",
-      popupImageUrl: `./${name[1]}/Image/Facility_Info.png`
+      popupImageUrl: `./${name[0]}/Image/Facility_Info.png`
     }],
   [name[1]]: [{
       position: new THREE.Vector3(0, 1.5, -1.5),
