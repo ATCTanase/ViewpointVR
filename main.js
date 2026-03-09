@@ -20,45 +20,50 @@ const billboardButtons = [];
 
 const params = new URLSearchParams(window.location.search);
 const sceneName = params.get("model") || "0";
-
+const name = ["GoiThermalPS2F","OchiaiHydroelectricPS1F"];
 const modelConfigs = {
-  "GoiThermalPS2F": {
-    ply: "./Model/point_cloud_alpha_voxel_200k.ply",
+  [name[0]]: {
+    ply: `./${name[0]}/Model/GoiThermalPS2F.ply`,
     position: [8,0,-130],
     rotation: [Math.PI, Math.PI/2, 0],
     scale: 1
   },
 
-  "OchiaiHydroelectricPS1F": {
-    ply: "./Model/Hydroelectric_sh0_cropped_alpha_voxel_200k.ply",
+  [name[1]]: {
+    ply: `./${name[1]}/Model/OchiaiHydroelectricPS1F.ply`,
     position: [2.5,2,-4],
     rotation: [THREE.MathUtils.degToRad(94),-Math.PI/2,0],
     scale: 10
   }
 };
 
+const map = {
+  [name[0]]: {map: `./${name[0]}/Image/Map.png` },
+  [name[1]]: {map: `./${name[1]}/Image/Map.png` },
+};
+
 const billboardConfigs = {
-  "GoiThermalPS2F": [{
+  [name[0]]: [{
       position: new THREE.Vector3(0, 1.5, -3),
       iconUrl: "./icon/Info.png",
       title: "360°画像",
-      popupImageUrl: "./Image/360_Image.png"},
+      popupImageUrl: `./${name[1]}/Image/360_Image.png`},
     {
       position: new THREE.Vector3(2, 1.5, -4),
       iconUrl: "./icon/Info.png",
       title: "設備情報",
-      popupImageUrl: "./Image/Facility_Info.png"
-  }],
-  "OchiaiHydroelectricPS1F": [{
+      popupImageUrl: `./${name[1]}/Image/Facility_Info.png`
+    }],
+  [name[1]]: [{
       position: new THREE.Vector3(0, 1.5, -1.5),
       iconUrl: "./icon/Info.png",
       title: "360°画像",
-      popupImageUrl: "./Image/360_Image.png"},
+      popupImageUrl: `./${name[1]}/Image/360_Image.png`},
     {
       position: new THREE.Vector3(2, 1.5, -2.5),
       iconUrl: "./icon/Info.png",
       title: "設備情報",
-      popupImageUrl: "./Image/Facility_Info.png"
+      popupImageUrl: `./${name[1]}/Image/Facility_Info.png`
   }]
 }
 
@@ -401,30 +406,44 @@ function exitApp() {
 // ---------------------------
 // Map UI
 // ---------------------------
+async function Exists(url) {
+  try {
+    const res = await fetch(url, { method: "HEAD" });
+    return res.ok;
+  } catch {
+    return false;
+  }
+}
+
 const mapGroup = new THREE.Group();
 camera.add(mapGroup);
 
 // 左上配置（視界の左上）
 mapGroup.position.set(-0.3, 0.35, -1.5);
+const path = map[sceneName].name;
+Exists(path).then(exists => {
+  if (exists) {
+  const mapTexture = new THREE.TextureLoader().load(path);
 
-const mapTexture = new THREE.TextureLoader().load("./Map/MAP.png");
+  const mapMesh = new THREE.Mesh(
+    new THREE.PlaneGeometry(0.4, 0.4),
+    new THREE.MeshBasicMaterial({
+      map: mapTexture,
+      transparent: true,
+      depthTest: false,
+      depthWrite: false
+    })
+  );
 
-const mapMesh = new THREE.Mesh(
-  new THREE.PlaneGeometry(0.4, 0.4),
-  new THREE.MeshBasicMaterial({
-    map: mapTexture,
-    transparent: true,
-    depthTest: false,
-    depthWrite: false
-  })
-);
+  mapGroup.add(mapMesh);
 
-mapGroup.add(mapMesh);
-
-mapMesh.renderOrder = 1002;
-// 初期は非表示
-mapGroup.visible = false;
-
+  mapMesh.renderOrder = 1002;
+  // 初期は非表示
+  mapGroup.visible = false;
+  }
+  else
+  {}
+});
 function createBillboardButton({ position, iconUrl, title, popupImageUrl }) {
 
   const group = new THREE.Group();
@@ -529,13 +548,16 @@ function createBillboardButton({ position, iconUrl, title, popupImageUrl }) {
 }
 
 
-billboardConfig.forEach(config => {
-  world.add(createBillboardButton({
-    position: config.position,
-    iconUrl: config.iconUrl,
-    title: config.title,
-    popupImageUrl: config.popupImageUrl
-  }));
+billboardConfig.forEach(config => {  
+  Exists(config.iconUrl).then(exists => {
+  if (exists) {
+    world.add(createBillboardButton({
+      position: config.position,
+      iconUrl: config.iconUrl,
+      title: config.title,
+      popupImageUrl: config.popupImageUrl
+    }));
+  }});
 });
 
 /* ----------------------------------
