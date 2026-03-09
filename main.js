@@ -22,14 +22,14 @@ const params = new URLSearchParams(window.location.search);
 const sceneName = params.get("model") || "0";
 
 const modelConfigs = {
-  "0": {
+  "GoiThermalPS2F": {
     ply: "./point_cloud_alpha_voxel_200k.ply",
     position: [8,0,-130],
     rotation: [Math.PI, Math.PI/2, 0],
     scale: 1
   },
 
-  "1": {
+  "OchiaiHydroelectricPS1F": {
     ply: "./Hydroelectric_sh0_cropped_alpha_voxel_200k.ply",
     position: [2.5,2,-4],
     rotation: [THREE.MathUtils.degToRad(94),-Math.PI/2,0],
@@ -38,7 +38,7 @@ const modelConfigs = {
 };
 
 const billboardConfigs = {
-  "0": [{
+  "GoiThermalPS2F": [{
       position: new THREE.Vector3(0, 1.5, -3),
       iconUrl: "./icon/Info.png",
       title: "360°画像",
@@ -49,7 +49,7 @@ const billboardConfigs = {
       title: "設備情報",
       popupImageUrl: "./Image/Facility_Info.png"
   }],
-  "1": [{
+  "OchiaiHydroelectricPS1F": [{
       position: new THREE.Vector3(0, 1.5, -1.5),
       iconUrl: "./icon/Info.png",
       title: "360°画像",
