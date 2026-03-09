@@ -421,7 +421,7 @@ camera.add(mapGroup);
 
 // 左上配置（視界の左上）
 mapGroup.position.set(-0.3, 0.35, -1.5);
-const path = map[sceneName].name;
+const path = map[sceneName].map;
 Exists(path).then(exists => {
   if (exists) {
   const mapTexture = new THREE.TextureLoader().load(path);
@@ -550,7 +550,7 @@ function createBillboardButton({ position, iconUrl, title, popupImageUrl }) {
 
 
 billboardConfig.forEach(config => {  
-  Exists(config.iconUrl).then(exists => {
+  Exists(config.popupImageUrl).then(exists => {
   if (exists) {
     world.add(createBillboardButton({
       position: config.position,
