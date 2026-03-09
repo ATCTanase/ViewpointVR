@@ -23,14 +23,14 @@ const sceneName = params.get("model") || "0";
 
 const modelConfigs = {
   "GoiThermalPS2F": {
-    ply: "./point_cloud_alpha_voxel_200k.ply",
+    ply: "./Model/point_cloud_alpha_voxel_200k.ply",
     position: [8,0,-130],
     rotation: [Math.PI, Math.PI/2, 0],
     scale: 1
   },
 
   "OchiaiHydroelectricPS1F": {
-    ply: "./Hydroelectric_sh0_cropped_alpha_voxel_200k.ply",
+    ply: "./Model/Hydroelectric_sh0_cropped_alpha_voxel_200k.ply",
     position: [2.5,2,-4],
     rotation: [THREE.MathUtils.degToRad(94),-Math.PI/2,0],
     scale: 10
