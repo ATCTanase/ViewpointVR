@@ -36,7 +36,7 @@ const modelConfigs = {
   },
   [name[2]]: {
     ply: `./${name[2]}/Model/GoiThermalPS1F.ply`,
-    position: [8,0,-10],//座標
+    position: [8,-1,-20],//座標
     rotation: [THREE.MathUtils.degToRad(-102),THREE.MathUtils.degToRad(-97),0],//回転
     scale: 35//モデル自体のサイズ
   },
@@ -79,12 +79,12 @@ const billboardConfigs = {
       popupImageUrl: `./${name[1]}/Image/Facility_Info.png`
   }],
     [name[2]]: [{
-      position: new THREE.Vector3(0, 1.5, -1.5),//モデルに合わせた座標
+      position: new THREE.Vector3(0, 1.5, -3),
       iconUrl: "./icon/Info.png",
       title: "360°画像",
       popupImageUrl: `./${name[2]}/Image/360_Image.png`},
     {
-      position: new THREE.Vector3(2, 1.5, -2.5),//モデルに合わせた座標
+      position: new THREE.Vector3(2, 1.5, -4),
       iconUrl: "./icon/Info.png",
       title: "設備情報",
       popupImageUrl: `./${name[2]}/Image/Facility_Info.png`
