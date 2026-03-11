@@ -19,8 +19,8 @@ let uiIsVisible = true;
 const billboardButtons = [];
 
 const params = new URLSearchParams(window.location.search);
-const sceneName = params.get("model") || "0";
-const name = ["GoiThermalPS2F","OchiaiHydroelectricPS1F","GoiThermalPS1F"."4"];
+const sceneName = params.get("model") || "GoiThermalPS2F";
+const name = ["GoiThermalPS2F","OchiaiHydroelectricPS1F","GoiThermalPS1F","4"];
 const modelConfigs = {
   [name[0]]: {
     ply: `./${name[0]}/Model/GoiThermalPS2F.ply`,
