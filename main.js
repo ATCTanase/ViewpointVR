@@ -20,7 +20,7 @@ const billboardButtons = [];
 
 const params = new URLSearchParams(window.location.search);
 const sceneName = params.get("model") || "0";
-const name = ["GoiThermalPS2F","OchiaiHydroelectricPS1F"];
+const name = ["GoiThermalPS2F","OchiaiHydroelectricPS1F","GoiThermalPS1F"."4"];
 const modelConfigs = {
   [name[0]]: {
     ply: `./${name[0]}/Model/GoiThermalPS2F.ply`,
@@ -35,11 +35,25 @@ const modelConfigs = {
     rotation: [THREE.MathUtils.degToRad(94),-Math.PI/2,0],
     scale: 10
   }
+  [name[2]]: {
+    ply: `./${name[2]}/Model/GoiThermalPS1F.ply`,
+    position: [0,0,125],//座標
+    rotation: [THREE.MathUtils.degToRad(-102),THREE.MathUtils.degToRad(-97),0],//回転
+    scale: 35//モデル自体のサイズ
+  }
+  [name[3]]: {
+    ply: `./${name[3]}/Model/モデル名.ply`,
+    position: [0,0,0],
+    rotation: [THREE.MathUtils.degToRad(90),-Math.PI/2,0],
+    scale: 1
+  }
 };
 
 const map = {
   [name[0]]: {map: `./${name[0]}/Image/Map.png` },
   [name[1]]: {map: `./${name[1]}/Image/Map.png` },
+  [name[2]]: {map: `./${name[2]}/Image/Map.png` },
+  [name[3]]: {map: `./${name[3]}/Image/Map.png` },
 };
 
 const billboardConfigs = {
@@ -64,6 +78,28 @@ const billboardConfigs = {
       iconUrl: "./icon/Info.png",
       title: "設備情報",
       popupImageUrl: `./${name[1]}/Image/Facility_Info.png`
+  }],
+    [name[2]]: [{
+      position: new THREE.Vector3(0, 1.5, -1.5),//モデルに合わせた座標
+      iconUrl: "./icon/Info.png",
+      title: "360°画像",
+      popupImageUrl: `./${name[2]}/Image/360_Image.png`},
+    {
+      position: new THREE.Vector3(2, 1.5, -2.5),//モデルに合わせた座標
+      iconUrl: "./icon/Info.png",
+      title: "設備情報",
+      popupImageUrl: `./${name[2]}/Image/Facility_Info.png`
+  }], 
+   [name[3]]: [{
+      position: new THREE.Vector3(0, 1.5, -1.5),//モデルに合わせた座標
+      iconUrl: "./icon/Info.png",
+      title: "360°画像",
+      popupImageUrl: `./${name[3]}/Image/360_Image.png`},
+    {
+      position: new THREE.Vector3(2, 1.5, -2.5),//モデルに合わせた座標
+      iconUrl: "./icon/Info.png",
+      title: "設備情報",
+      popupImageUrl: `./${name[3]}/Image/Facility_Info.png`
   }]
 }
 
