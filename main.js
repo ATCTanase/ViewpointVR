@@ -28,19 +28,18 @@ const modelConfigs = {
     rotation: [Math.PI, Math.PI/2, 0],
     scale: 1
   },
-
   [name[1]]: {
     ply: `./${name[1]}/Model/OchiaiHydroelectricPS1F.ply`,
     position: [2.5,2,-4],
     rotation: [THREE.MathUtils.degToRad(94),-Math.PI/2,0],
     scale: 10
-  }
+  },
   [name[2]]: {
     ply: `./${name[2]}/Model/GoiThermalPS1F.ply`,
     position: [0,0,125],//座標
     rotation: [THREE.MathUtils.degToRad(-102),THREE.MathUtils.degToRad(-97),0],//回転
     scale: 35//モデル自体のサイズ
-  }
+  },
   [name[3]]: {
     ply: `./${name[3]}/Model/モデル名.ply`,
     position: [0,0,0],
