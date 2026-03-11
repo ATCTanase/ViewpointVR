@@ -36,9 +36,9 @@ const modelConfigs = {
   },
   [name[2]]: {
     ply: `./${name[2]}/Model/GoiThermalPS1F.ply`,
-    position: [24,2,-50],//座標
+    position: [16,2,-25],//座標
     rotation: [THREE.MathUtils.degToRad(-100),THREE.MathUtils.degToRad(-95),0],//回転
-    scale: 100//モデル自体のサイズ
+    scale: 50//モデル自体のサイズ
   },
   [name[3]]: {
     ply: `./${name[3]}/Model/モデル名.ply`,
