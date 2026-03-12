@@ -41,9 +41,9 @@ const modelConfigs = {
     scale: 50//モデル自体のサイズ
   },
   [name[3]]: {
-    ply: `./${name[3]}/Model/モデル名.ply`,
-    position: [0,0,0],
-    rotation: [THREE.MathUtils.degToRad(90),-Math.PI/2,0],
+    ply: `./${name[3]}/Model/4.ply`,
+    position: [-7,0,0],
+    rotation: [THREE.MathUtils.degToRad(-87.8),0,0],
     scale: 1
   }
 };
