@@ -20,7 +20,7 @@ const billboardButtons = [];
 
 const params = new URLSearchParams(window.location.search);
 const sceneName = params.get("model") || "GoiThermalPS2F";
-const name = ["GoiThermalPS2F","OchiaiHydroelectricPS1F","GoiThermalPS1F","4"];
+const name = ["GoiThermalPS2F","OchiaiHydroelectricPS1F","GoiThermalPS1F","Showroom-12A"];
 const modelConfigs = {
   [name[0]]: {
     ply: `./${name[0]}/Model/GoiThermalPS2F.ply`,
@@ -41,7 +41,7 @@ const modelConfigs = {
     scale: 50//モデル自体のサイズ
   },
   [name[3]]: {
-    ply: `./${name[3]}/Model/4.ply`,
+    ply: `./${name[3]}/Model/Showroom-12A.ply`,
     position: [-7,1,-5.5],
     rotation: [THREE.MathUtils.degToRad(-87.8),0,0],
     scale: 1
@@ -90,12 +90,12 @@ const billboardConfigs = {
       popupImageUrl: `./${name[2]}/Image/Facility_Info.png`
   }], 
    [name[3]]: [{
-      position: new THREE.Vector3(0, 1.5, 0),//モデルに合わせた座標
+      position: new THREE.Vector3(0, 1.5, 0),
       iconUrl: "./icon/Info.png",
       title: "360°画像",
       popupImageUrl: `./${name[3]}/Image/360_Image.png`},
     {
-      position: new THREE.Vector3(2, 1.5, -1),//モデルに合わせた座標
+      position: new THREE.Vector3(2, 1.5, -1),
       iconUrl: "./icon/Info.png",
       title: "設備情報",
       popupImageUrl: `./${name[3]}/Image/Facility_Info.png`
