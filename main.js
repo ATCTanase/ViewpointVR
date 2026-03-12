@@ -42,7 +42,7 @@ const modelConfigs = {
   },
   [name[3]]: {
     ply: `./${name[3]}/Model/4.ply`,
-    position: [-7,0,0],
+    position: [-7,1,-5],
     rotation: [THREE.MathUtils.degToRad(-87.8),0,0],
     scale: 1
   }
