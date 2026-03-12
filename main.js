@@ -42,7 +42,7 @@ const modelConfigs = {
   },
   [name[3]]: {
     ply: `./${name[3]}/Model/4.ply`,
-    position: [-7,1,-5],
+    position: [-7,1,-5.5],
     rotation: [THREE.MathUtils.degToRad(-87.8),0,0],
     scale: 1
   }
@@ -90,12 +90,12 @@ const billboardConfigs = {
       popupImageUrl: `./${name[2]}/Image/Facility_Info.png`
   }], 
    [name[3]]: [{
-      position: new THREE.Vector3(0, 1.5, -1.5),//モデルに合わせた座標
+      position: new THREE.Vector3(0, 1.5, -1),//モデルに合わせた座標
       iconUrl: "./icon/Info.png",
       title: "360°画像",
       popupImageUrl: `./${name[3]}/Image/360_Image.png`},
     {
-      position: new THREE.Vector3(2, 1.5, -2.5),//モデルに合わせた座標
+      position: new THREE.Vector3(2, 1.5, -2),//モデルに合わせた座標
       iconUrl: "./icon/Info.png",
       title: "設備情報",
       popupImageUrl: `./${name[3]}/Image/Facility_Info.png`
